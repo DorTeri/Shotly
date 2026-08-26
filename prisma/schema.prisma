@@ -1,0 +1,352 @@
+// Shotly — the wedding camera that lives on the guests' phones.
+//
+// Two rules encoded here that the rest of the app depends on:
+//   1. `Frame.developsAt` is a column, not a job. The Darkroom feed is a query.
+//   2. Style lives on the Wedding, never on the Frame. Originals are never modified,
+//      so a couple can re-develop the whole wedding in a different look later.
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Tier {
+  ROLL
+  PARTY
+  DIRECTORS_CUT
+}
+
+enum CameraMode {
+  FILM_ROLL // nothing visible to anyone until the reveal
+  DARKROOM  // visible to everyone `developDelayMinutes` after the shot
+  INSTANT   // visible immediately
+}
+
+enum WeddingStyle {
+  DISPOSABLE
+  KODAK
+  BW
+  POLAROID
+  TLV
+  CINEMA
+}
+
+enum ModerationMode {
+  AUTO    // screened automatically, published immediately
+  APPROVE // a moderator releases every frame
+}
+
+enum Visibility {
+  PUBLIC
+  SECRET // for the couple only — never in the feed, screen, awards or missions
+}
+
+enum FrameState {
+  QUEUED  // accepted, still being processed
+  OK
+  HIDDEN  // pulled by a moderator or auto-screen
+  PENDING // waiting for approval under ModerationMode.APPROVE
+}
+
+enum ReactionKind {
+  LOVED
+  FUNNY
+  ICONIC
+  SWEET
+}
+
+enum ChallengeWindow {
+  STANDING
+  TIMED
+}
+
+enum AwardKind {
+  PHOTO_OF_NIGHT
+  FUNNIEST
+  MOST_ICONIC
+  MOST_LOVED
+  SWEETEST
+  TOP_PHOTOGRAPHER
+  BEST_DANCEFLOOR
+}
+
+model Wedding {
+  id          String   @id @default(cuid())
+  slug        String   @unique // what the QR points at: /w/{slug}
+  coupleNames String
+  weddingDate DateTime
+
+  tier  Tier         @default(PARTY)
+  style WeddingStyle @default(DISPOSABLE)
+
+  // The camera
+  cameraMode          CameraMode @default(DARKROOM)
+  exposures           Int        @default(15)
+  developDelayMinutes Int        @default(25)
+  maxExposures        Int        @default(40) // hard cap so one cousin can't shoot a third of the wedding
+
+  // The shape of the night — drives timed challenges, Ceremony Mode and reveal chapters
+  rollOpensAt    DateTime
+  ceremonyStart  DateTime?
+  ceremonyEnd    DateTime?
+  dinnerAt       DateTime?
+  dancingAt      DateTime?
+  revealAt       DateTime
+
+  moderationMode ModerationMode @default(AUTO)
+  screenEnabled  Boolean        @default(true)
+  leaderboard    Boolean        @default(false) // off by default, deliberately
+  voiceNotes     Boolean        @default(true)
+
+  // Unguessable entry points. No passwords anywhere in v1.
+  studioToken String @unique
+  modToken    String @unique
+  ownerEmail  String?
+
+  paidAt    DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  guests     Guest[]
+  frames     Frame[]
+  challenges Challenge[]
+  missions   Mission[]
+  voiceNotes_ VoiceNote[]
+  awards     Award[]
+
+  @@index([revealAt])
+}
+
+model Guest {
+  id          String  @id @default(cuid())
+  weddingId   String
+  displayName String
+  tableNumber Int?
+  deviceToken String // cookie identity — no accounts
+  contact     String? // asked after the first shot, never before
+
+  exposuresTotal Int @default(15)
+  exposuresUsed  Int @default(0)
+
+  isCouple Boolean @default(false) // the couple get their own roll
+  isPhotographer Boolean @default(false) // the pro lane
+
+  createdAt DateTime @default(now())
+
+  wedding     Wedding      @relation(fields: [weddingId], references: [id], onDelete: Cascade)
+  frames      Frame[]
+  reactions   Reaction[]
+  completions Completion[]
+  votes       MissionVote[]
+  voiceNotes  VoiceNote[]
+  tags        Tag[]
+  reports     Report[]
+  awards      Award[]
+
+  @@unique([weddingId, deviceToken])
+  @@index([weddingId])
+}
+
+model Frame {
+  id        String @id @default(cuid())
+  weddingId String
+  guestId   String
+
+  // Generated on the device before the upload leaves it, so the offline queue
+  // can retry as often as it likes without ever producing a duplicate frame.
+  clientId String?
+
+  storageKey String
+  thumbKey   String?
+  width      Int
+  height     Int
+  bytes      Int
+
+  takenAt    DateTime // when the shutter fired on the device, not when it reached us
+  developsAt DateTime // takenAt + developDelayMinutes. The entire Darkroom mechanic.
+  createdAt  DateTime @default(now())
+
+  visibility Visibility @default(PUBLIC)
+  state      FrameState @default(QUEUED)
+  screenScore Float? // automatic explicit-content score
+
+  challengeId String?
+  missionId   String?
+
+  // Denormalised so the feed and the awards can sort without counting rows
+  lovedCount  Int @default(0)
+  funnyCount  Int @default(0)
+  iconicCount Int @default(0)
+  sweetCount  Int @default(0)
+
+  wedding     Wedding       @relation(fields: [weddingId], references: [id], onDelete: Cascade)
+  guest       Guest         @relation(fields: [guestId], references: [id], onDelete: Cascade)
+  challenge   Challenge?    @relation(fields: [challengeId], references: [id], onDelete: SetNull)
+  mission     Mission?      @relation("MissionEntries", fields: [missionId], references: [id], onDelete: SetNull)
+  reactions   Reaction[]
+  completion  Completion?
+  tags        Tag[]
+  reports     Report[]
+  votes       MissionVote[]
+  awards      Award[]
+  wonMission  Mission?      @relation("MissionWinner")
+
+  @@unique([guestId, clientId])
+  @@index([weddingId, developsAt])
+  @@index([weddingId, visibility, state])
+  @@index([guestId])
+}
+
+model Reaction {
+  id      String       @id @default(cuid())
+  frameId String
+  guestId String
+  kind    ReactionKind
+
+  createdAt DateTime @default(now())
+
+  frame Frame @relation(fields: [frameId], references: [id], onDelete: Cascade)
+  guest Guest @relation(fields: [guestId], references: [id], onDelete: Cascade)
+
+  @@unique([frameId, guestId, kind])
+  @@index([frameId])
+}
+
+model Challenge {
+  id        String @id @default(cuid())
+  weddingId String
+
+  pack   String // "classic" | "chaos" | "family" | "dancefloor" | "israeli" | "custom"
+  textHe String
+  textEn String
+  emoji  String @default("📸")
+
+  window ChallengeWindow @default(STANDING)
+  payout Int             @default(2) // exposures, never points
+
+  opensAt  DateTime?
+  closesAt DateTime?
+  sort     Int       @default(0)
+
+  wedding     Wedding      @relation(fields: [weddingId], references: [id], onDelete: Cascade)
+  frames      Frame[]
+  completions Completion[]
+
+  @@index([weddingId])
+}
+
+model Completion {
+  id          String @id @default(cuid())
+  challengeId String
+  guestId     String
+  frameId     String @unique
+
+  createdAt DateTime @default(now())
+
+  challenge Challenge @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+  guest     Guest     @relation(fields: [guestId], references: [id], onDelete: Cascade)
+  frame     Frame     @relation(fields: [frameId], references: [id], onDelete: Cascade)
+
+  @@unique([challengeId, guestId])
+}
+
+model Mission {
+  id        String @id @default(cuid())
+  weddingId String
+
+  promptHe String
+  promptEn String
+
+  opensAt        DateTime
+  closesAt       DateTime
+  votingClosesAt DateTime
+
+  winnerFrameId String? @unique
+
+  wedding     Wedding       @relation(fields: [weddingId], references: [id], onDelete: Cascade)
+  entries     Frame[]       @relation("MissionEntries")
+  winnerFrame Frame?        @relation("MissionWinner", fields: [winnerFrameId], references: [id], onDelete: SetNull)
+  votes       MissionVote[]
+
+  @@index([weddingId])
+}
+
+model MissionVote {
+  id        String @id @default(cuid())
+  missionId String
+  guestId   String
+  frameId   String
+
+  createdAt DateTime @default(now())
+
+  mission Mission @relation(fields: [missionId], references: [id], onDelete: Cascade)
+  guest   Guest   @relation(fields: [guestId], references: [id], onDelete: Cascade)
+  frame   Frame   @relation(fields: [frameId], references: [id], onDelete: Cascade)
+
+  @@unique([missionId, guestId])
+}
+
+model VoiceNote {
+  id        String @id @default(cuid())
+  weddingId String
+  guestId   String
+
+  audioKey   String
+  durationMs Int
+  createdAt  DateTime @default(now())
+
+  wedding Wedding @relation(fields: [weddingId], references: [id], onDelete: Cascade)
+  guest   Guest   @relation(fields: [guestId], references: [id], onDelete: Cascade)
+
+  @@index([weddingId])
+}
+
+model Award {
+  id        String    @id @default(cuid())
+  weddingId String
+  kind      AwardKind
+
+  frameId String?
+  guestId String?
+
+  computedAt DateTime @default(now())
+
+  wedding Wedding @relation(fields: [weddingId], references: [id], onDelete: Cascade)
+  frame   Frame?  @relation(fields: [frameId], references: [id], onDelete: SetNull)
+  guest   Guest?  @relation(fields: [guestId], references: [id], onDelete: SetNull)
+
+  @@unique([weddingId, kind])
+}
+
+// Non-biometric "who is in this photo". Ships instead of face recognition in v1.
+model Tag {
+  id      String @id @default(cuid())
+  frameId String
+  guestId String
+
+  createdAt DateTime @default(now())
+
+  frame Frame @relation(fields: [frameId], references: [id], onDelete: Cascade)
+  guest Guest @relation(fields: [guestId], references: [id], onDelete: Cascade)
+
+  @@unique([frameId, guestId])
+  @@index([guestId])
+}
+
+model Report {
+  id      String  @id @default(cuid())
+  frameId String
+  guestId String
+  reason  String?
+
+  createdAt DateTime @default(now())
+
+  frame Frame @relation(fields: [frameId], references: [id], onDelete: Cascade)
+  guest Guest @relation(fields: [guestId], references: [id], onDelete: Cascade)
+
+  @@unique([frameId, guestId])
+}

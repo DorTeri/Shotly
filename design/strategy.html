@@ -1,0 +1,828 @@
+<meta charset="utf-8">
+<title>Shotly Product Design</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Assistant:wght@200..800&family=Azeret+Mono:wght@300..700&display=swap">
+
+<style>
+:root{
+  --ground:#EAE6E1;
+  --raise:#F5F2EE;
+  --raise-2:#DFD9D2;
+  --ink:#171314;
+  --ink-2:#4A4143;
+  --ink-3:#7C7170;
+  --rule:#CFC7BF;
+  --red:#C9351F;
+  --red-soft:rgba(201,53,31,.10);
+  --amber:#96670E;
+  --amber-soft:rgba(150,103,14,.12);
+  --shadow:0 1px 2px rgba(23,19,20,.05),0 12px 32px -12px rgba(23,19,20,.18);
+  --sprocket:#D6CFC7;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --ground:#100C0D;
+    --raise:#1A1517;
+    --raise-2:#241D1F;
+    --ink:#EFE9E3;
+    --ink-2:#BCB0AC;
+    --ink-3:#8C7F7C;
+    --rule:#2E2629;
+    --red:#E5402A;
+    --red-soft:rgba(229,64,42,.14);
+    --amber:#F5B841;
+    --amber-soft:rgba(245,184,65,.13);
+    --shadow:0 1px 2px rgba(0,0,0,.5),0 18px 44px -16px rgba(0,0,0,.75);
+    --sprocket:#221B1D;
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#100C0D;
+  --raise:#1A1517;
+  --raise-2:#241D1F;
+  --ink:#EFE9E3;
+  --ink-2:#BCB0AC;
+  --ink-3:#8C7F7C;
+  --rule:#2E2629;
+  --red:#E5402A;
+  --red-soft:rgba(229,64,42,.14);
+  --amber:#F5B841;
+  --amber-soft:rgba(245,184,65,.13);
+  --shadow:0 1px 2px rgba(0,0,0,.5),0 18px 44px -16px rgba(0,0,0,.75);
+  --sprocket:#221B1D;
+}
+
+*{box-sizing:border-box}
+body{
+  background:var(--ground);
+  color:var(--ink);
+  font-family:"Assistant",system-ui,-apple-system,"Segoe UI",sans-serif;
+  font-size:17px;
+  line-height:1.62;
+  margin:0;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1120px;margin:0 auto;padding:0 28px 120px}
+h1,h2,h3,h4{font-family:"Archivo",Impact,system-ui,sans-serif;text-wrap:balance;margin:0}
+.mono{font-family:"Azeret Mono",ui-monospace,"SFMono-Regular",monospace;font-variant-numeric:tabular-nums}
+a{color:var(--red)}
+a:focus-visible,button:focus-visible{outline:2px solid var(--red);outline-offset:3px}
+
+.rebate{
+  font-family:"Azeret Mono",ui-monospace,monospace;
+  font-size:10px;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--ink-3);display:flex;gap:14px;align-items:center;flex-wrap:wrap;
+}
+.rebate b{color:var(--red);font-weight:600}
+.sprockets{
+  height:9px;flex:1;min-width:40px;
+  background-image:repeating-linear-gradient(to right,var(--sprocket) 0 9px,transparent 9px 17px);
+  border-radius:1px;
+}
+
+.hero{padding:72px 0 56px;border-bottom:1px solid var(--rule)}
+.mark{
+  font-family:"Archivo",sans-serif;font-weight:900;font-stretch:118%;
+  font-size:13px;letter-spacing:.34em;text-transform:uppercase;color:var(--red);
+}
+.hero h1{
+  font-weight:900;font-stretch:112%;
+  font-size:clamp(38px,6.6vw,74px);line-height:.98;letter-spacing:-.025em;
+  margin:26px 0 0;max-width:16ch;
+}
+.hero h1 em{font-style:normal;color:var(--red)}
+.hero .sub{margin-top:26px;max-width:60ch;font-size:20px;color:var(--ink-2)}
+.pitch{
+  margin-top:36px;display:inline-flex;flex-direction:column;gap:6px;
+  border-left:3px solid var(--red);padding:14px 0 14px 20px;
+}
+.pitch span{font-family:"Archivo",sans-serif;font-weight:700;font-size:clamp(19px,2.6vw,26px);letter-spacing:-.01em;line-height:1.2}
+.pitch span:nth-child(2){color:var(--ink-2)}
+.pitch span:nth-child(3){color:var(--ink-3)}
+
+.verdict{
+  margin:56px 0 0;background:var(--raise);border:1px solid var(--rule);border-radius:4px;
+  padding:34px 34px 30px;box-shadow:var(--shadow);
+}
+.verdict h2{font-size:13px;letter-spacing:.2em;text-transform:uppercase;color:var(--red);font-weight:700;font-family:"Azeret Mono",monospace}
+.verdict p{margin:16px 0 0;max-width:72ch;color:var(--ink-2)}
+.verdict p strong{color:var(--ink);font-weight:700}
+
+section{padding-top:80px;scroll-margin-top:20px}
+.fhead{display:flex;gap:20px;align-items:baseline;border-bottom:1px solid var(--rule);padding-bottom:16px;margin-bottom:32px}
+.fnum{font-family:"Azeret Mono",monospace;font-size:12px;font-weight:600;letter-spacing:.1em;color:var(--red);flex:none}
+.fhead h2{font-weight:800;font-stretch:106%;font-size:clamp(26px,3.6vw,38px);letter-spacing:-.02em;line-height:1.05;flex:1}
+.fhead .tag{font-family:"Azeret Mono",monospace;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3);flex:none}
+.prose{max-width:68ch}
+.prose p{margin:0 0 18px}
+.prose p:last-child{margin-bottom:0}
+h3{font-size:19px;font-weight:700;letter-spacing:-.01em;margin:34px 0 12px}
+h4{font-size:12px;font-family:"Azeret Mono",monospace;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3);margin:34px 0 12px}
+.lead{font-size:19px;color:var(--ink-2);max-width:66ch;margin:0 0 26px}
+
+ul.clean{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:11px}
+ul.clean li{padding-left:20px;position:relative;color:var(--ink-2);max-width:68ch}
+ul.clean li::before{content:"";position:absolute;left:0;top:.72em;width:7px;height:7px;background:var(--red);border-radius:1px}
+ul.clean li strong{color:var(--ink)}
+
+.grid{display:grid;gap:14px}
+.g2{grid-template-columns:repeat(auto-fit,minmax(290px,1fr))}
+.g3{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+.card{background:var(--raise);border:1px solid var(--rule);border-radius:4px;padding:22px 22px 20px}
+.card h3{margin:0 0 8px;font-size:17px}
+.card p{margin:0;font-size:15px;color:var(--ink-2);line-height:1.55}
+.card .kicker{font-family:"Azeret Mono",monospace;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--red);display:block;margin-bottom:10px}
+.card.hot{border-color:var(--red);background:var(--red-soft)}
+
+.call{border-left:3px solid var(--amber);background:var(--amber-soft);padding:18px 22px;border-radius:0 4px 4px 0;margin:26px 0;max-width:72ch}
+.call p{margin:0;font-size:16px;color:var(--ink-2)}
+.call p+p{margin-top:10px}
+.call b{color:var(--ink);font-weight:700}
+
+.tscroll{overflow-x:auto;margin:22px 0;border:1px solid var(--rule);border-radius:4px;background:var(--raise)}
+table{border-collapse:collapse;width:100%;min-width:580px;font-size:15px}
+th{text-align:left;font-family:"Azeret Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);font-weight:600;padding:14px 18px;border-bottom:1px solid var(--rule);white-space:nowrap}
+td{padding:13px 18px;border-bottom:1px solid var(--rule);color:var(--ink-2);vertical-align:top}
+tr:last-child td{border-bottom:0}
+td b{color:var(--ink);font-weight:700}
+.pill{display:inline-block;font-family:"Azeret Mono",monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;padding:3px 8px;border-radius:3px;white-space:nowrap}
+.pill.core{background:var(--red-soft);color:var(--red)}
+.pill.opt{background:var(--raise-2);color:var(--ink-2)}
+.pill.cut{background:var(--raise-2);color:var(--ink-3)}
+.pill.late{background:var(--amber-soft);color:var(--amber)}
+
+.tl{display:flex;flex-direction:column;margin:24px 0;max-width:76ch}
+.tl-row{display:grid;grid-template-columns:86px 1fr;gap:20px;padding:16px 0;border-bottom:1px solid var(--rule)}
+.tl-row:last-child{border-bottom:0}
+.tl-t{font-family:"Azeret Mono",monospace;font-size:12px;color:var(--red);font-weight:600;padding-top:3px}
+.tl-b h3{margin:0 0 4px;font-size:16px;font-weight:700}
+.tl-b p{margin:0;font-size:15px;color:var(--ink-2);line-height:1.55}
+
+.tiers{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(255px,1fr));margin:26px 0}
+.tier{background:var(--raise);border:1px solid var(--rule);border-radius:4px;padding:24px;display:flex;flex-direction:column;gap:14px}
+.tier.pick{border-color:var(--red);box-shadow:var(--shadow)}
+.tier .tname{font-family:"Archivo",sans-serif;font-weight:800;font-size:20px;letter-spacing:-.01em}
+.tier .tprice{font-family:"Azeret Mono",monospace;font-size:30px;font-weight:600;color:var(--red);letter-spacing:-.03em}
+.tier .tprice small{font-size:10px;color:var(--ink-3);letter-spacing:.14em;display:block;margin-top:6px;font-weight:400}
+.tier ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:7px;font-size:14px;color:var(--ink-2)}
+.tier ul li{padding-left:16px;position:relative}
+.tier ul li::before{content:"\00B7";position:absolute;left:4px;color:var(--red);font-weight:900}
+
+.risk{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--rule);border-radius:4px;overflow:hidden;background:var(--raise)}
+.risk>div{padding:18px 20px;border-bottom:1px solid var(--rule)}
+.risk>div:nth-child(odd){border-right:1px solid var(--rule)}
+.risk>div:nth-last-child(-n+2){border-bottom:0}
+.risk h3{margin:0 0 6px;font-size:15px}
+.risk p{margin:0;font-size:14.5px;color:var(--ink-2);line-height:1.5}
+.risk .rl{font-family:"Azeret Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);display:block;margin-bottom:8px}
+.risk .rl.hi{color:var(--red)}
+
+pre{background:var(--raise);border:1px solid var(--rule);border-radius:4px;padding:20px;overflow-x:auto;font-family:"Azeret Mono",monospace;font-size:13px;line-height:1.7;color:var(--ink-2);margin:20px 0}
+pre b{color:var(--red);font-weight:600}
+pre i{color:var(--ink-3);font-style:normal}
+
+.he{direction:rtl;unicode-bidi:isolate;font-family:"Assistant",sans-serif}
+.foot{margin-top:96px;padding-top:28px;border-top:1px solid var(--rule)}
+
+@media(max-width:640px){
+  .risk{grid-template-columns:1fr}
+  .risk>div:nth-child(odd){border-right:0}
+  .risk>div:nth-last-child(2){border-bottom:1px solid var(--rule)}
+  .tl-row{grid-template-columns:1fr;gap:6px}
+  body{font-size:16px}
+  .wrap{padding:0 20px 80px}
+}
+@media(prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+</style>
+
+<div class="wrap">
+
+<header class="hero">
+  <div class="rebate"><span class="mark">Shotly</span><span class="sprockets"></span><span>ISO 400</span><span>&middot;</span><span>36 EXP</span><span>&middot;</span><span><b>PRODUCT DESIGN</b></span></div>
+  <h1>You get 15 shots. No do-overs. They <em>develop</em> in the morning.</h1>
+  <p class="sub">A product and experience design for a wedding camera that lives on the guests' phones &mdash; plus an honest read on which parts of the idea will work at a real wedding and which parts won't.</p>
+  <div class="pitch">
+    <span>The photographer captures the wedding.</span>
+    <span>The guests capture everything else.</span>
+    <span class="he">&#1492;&#1510;&#1500;&#1501; &#1502;&#1510;&#1500;&#1501; &#1488;&#1514; &#1492;&#1495;&#1514;&#1493;&#1504;&#1492;. &#1492;&#1488;&#1493;&#1512;&#1495;&#1497;&#1501; &#1502;&#1510;&#1500;&#1502;&#1497;&#1501; &#1488;&#1514; &#1499;&#1500; &#1492;&#1513;&#1488;&#1512;.</span>
+  </div>
+</header>
+
+<div class="verdict">
+  <h2>The read</h2>
+  <p>The concept is strong, and its strength is not the album &mdash; it's the <strong>constraint</strong>. Every competitor in this space sells unlimited uploads, and every one of them produces the same thing: two thousand near-identical photos nobody opens twice. Fifteen shots produces a different artifact. A guest with fifteen shots looks around the room before pressing the button.</p>
+  <p>But the brief as written contains three contradictions that will break the product at a real wedding, and I've resolved all three rather than shipping around them. <strong>No-Preview cannot coexist with live reactions</strong> &mdash; if nothing is visible tonight, there is nothing to react to tonight. <strong>A live leaderboard is a liability</strong> at an event with grandparents, exes, and a rabbi. And <strong>a mobile web app has no push notifications</strong>, which means the entire live-game layer has no way to reach a guest whose phone is in their pocket &mdash; unless the venue screen becomes the notification channel, which reclassifies it from an upsell to core infrastructure.</p>
+  <p>Two questions worth holding onto. <strong>Would a guest actually open this at a wedding?</strong> Only if the shutter feels better than their own camera app and something they can't get elsewhere is waiting on the other side. <strong>Would the couple feel it gave them something the photographer couldn't?</strong> Yes &mdash; but not from the photos. From the voice notes, the secret memories, and the ninety seconds at 01:40 that nobody was supposed to see.</p>
+</div>
+
+<section id="s1">
+  <div class="fhead"><span class="fnum">01</span><h2>What the product actually is</h2><span class="tag">Structure</span></div>
+  <p class="lead">Three surfaces, one event. Everything else is a setting on one of them.</p>
+  <div class="grid g3">
+    <div class="card hot">
+      <span class="kicker">Surface 01 &middot; the product</span>
+      <h3>The Guest Camera</h3>
+      <p>Mobile web, no install, no account. A viewfinder, a frame counter, a shutter. Reached by scanning a card on the table. This is 95% of all usage and 100% of the content. If this screen isn't excellent, nothing else matters.</p>
+    </div>
+    <div class="card">
+      <span class="kicker">Surface 02 &middot; the purchase</span>
+      <h3>The Couple's Studio</h3>
+      <p>Two different products wearing one login. Before the wedding it's a setup flow that should feel like loading a camera. After the wedding it's a memory experience that should contain no settings at all.</p>
+    </div>
+    <div class="card">
+      <span class="kicker">Surface 03 &middot; the megaphone</span>
+      <h3>The Venue Screen</h3>
+      <p>A projector page at the hall. Your only broadcast channel &mdash; mobile web can't push. Every live mechanic in the product depends on this screen existing, so it cannot be a premium-tier extra.</p>
+    </div>
+  </div>
+
+  <h3>The object nobody counts as a surface</h3>
+  <p class="prose">There is a fourth: <strong>the Camera Pass</strong>, the printed card on every table. It's the only part of the product a guest sees before deciding whether to participate, the only part other wedding suppliers ever see, and the cheapest brand asset you will ever own. It deserves as much design attention as the camera screen. More on it in <a href="#s8">08</a>.</p>
+
+  <div class="call">
+    <p><b>One structural rule:</b> the original file is sacred. The wedding's visual style is a <b>presentation layer</b> &mdash; applied on display, baked only at export, never written into storage. This costs a little compute and buys three things: the couple can re-develop the whole wedding in a different style next week, a bad style choice made three months before the wedding isn't permanent, and "try your wedding in black &amp; white" becomes a delightful moment instead of a support ticket.</p>
+  </div>
+</section>
+
+<section id="s2">
+  <div class="fhead"><span class="fnum">02</span><h2>The couple, in three acts</h2><span class="tag">Journey</span></div>
+
+  <h4>Act I &mdash; Loading the camera (3 months out to the morning of)</h4>
+  <p class="prose">The failure mode here is obvious: eighteen toggles on one settings page and a couple who abandons at step four. The fix is to make setup a <strong>sequence of small pleasures</strong>, each producing something they can see.</p>
+  <div class="tl">
+    <div class="tl-row"><div class="tl-t">Step 1</div><div class="tl-b"><h3>Names and date</h3><p>Nothing else. The event exists after twenty seconds, and every later screen is decorated with their names &mdash; which makes it feel like theirs immediately.</p></div></div>
+    <div class="tl-row"><div class="tl-t">Step 2</div><div class="tl-b"><h3>Choose your camera</h3><p>The style picker, framed as choosing the physical camera their guests will hold &mdash; not as picking a filter. Each style is a camera body with a name, a film stock, and a live sample photo that visibly changes. This is the emotional peak of setup; it should be the most beautiful screen in the studio.</p></div></div>
+    <div class="tl-row"><div class="tl-t">Step 3</div><div class="tl-b"><h3>How much film</h3><p>10 / 15 / 24 / 36 exposures. Default 15. Label them in film language &mdash; <span class="mono">36 EXP</span> is a real roll, and couples who recognise it will feel the product knows what it's talking about.</p></div></div>
+    <div class="tl-row"><div class="tl-t">Step 4</div><div class="tl-b"><h3>When it develops</h3><p>Camera mode (see <a href="#s5">05</a>) plus reveal time. Default: <b>Darkroom</b> mode, reveal at 10:00 the next morning. Show a preview of the guest's screen for each option so the choice is visual, not verbal.</p></div></div>
+    <div class="tl-row"><div class="tl-t">Step 5</div><div class="tl-b"><h3>The night's shape</h3><p>Ceremony, dinner, dancing. Three time pickers. This one input drives timed challenges, Ceremony Mode, the venue screen's rhythm, and the recap's chapter breaks. It's the highest-leverage field in the product and couples will happily fill it in.</p></div></div>
+    <div class="tl-row"><div class="tl-t">Step 6</div><div class="tl-b"><h3>Pick your challenge packs</h3><p>Packs, not a checklist of forty items. Classic, Chaos, Family, Dancefloor, Israeli Wedding &mdash; each expands so they can delete the two they hate and write one of their own. Editing beats authoring.</p></div></div>
+    <div class="tl-row"><div class="tl-t">Step 7</div><div class="tl-b"><h3>Print the passes</h3><p>Generates a print-ready PDF: table cards, an entrance poster, bar cards, and the bonus-film cards for hidden locations. Also generates a one-page <b>MC script</b> &mdash; thirty seconds of what to say and when. Send this to the DJ.</p></div></div>
+  </div>
+  <div class="call"><p><b>Free to build, pay to publish.</b> Let couples complete the entire setup, see their Camera Pass, and preview the guest camera for free. Ask for money only when they hit "activate my wedding". They'll have already fallen in love with it, and you get their contact details either way.</p></div>
+
+  <h4>Act II &mdash; The night (they should barely touch it)</h4>
+  <p class="prose">A couple on their wedding day has approximately zero attention available. Their live view should be a single glanceable page: how many guests have joined, how many shots taken, and one button &mdash; <strong>launch a live mission</strong>. Everything else, including moderation, is delegated.</p>
+  <p class="prose"><strong>Best Man Mode</strong> is the answer to moderation. The couple assigns one or two friends as moderators during setup; those people get a link, and reported or auto-flagged photos go to <em>them</em>. The bride is not reviewing photos during her own wedding. Small feature, very large trust payoff, and exactly the kind of detail that gets a product recommended by wedding planners.</p>
+
+  <h4>Act III &mdash; The morning after, and the year after</h4>
+  <p class="prose">This is a completely different product and it should look like one: no settings, no counts of "uploads", no admin vocabulary. The post-wedding studio has one job &mdash; make two people lose ninety minutes. Sections, in the order they should appear: <strong>Your night</strong> (the assembled story), <strong>The Awards</strong>, <strong>Secret memories</strong>, <strong>Voice notes</strong>, <strong>Every frame</strong>, <strong>Your guests</strong>, <strong>Take it all</strong>.</p>
+  <p class="prose">Put <strong>secret memories and voice notes above the full gallery</strong>. The gallery is the commodity; the private things are what the photographer could not have given them. Leading with the gallery wastes the strongest card in the deck.</p>
+</section>
+
+<section id="s3">
+  <div class="fhead"><span class="fnum">03</span><h2>The guest, from scan to next morning</h2><span class="tag">Journey</span></div>
+  <p class="lead">The whole design constraint: a guest is holding a drink, standing up, in low light, slightly drunk, and will give you about eight seconds before deciding this isn't worth it.</p>
+
+  <div class="tl">
+    <div class="tl-row"><div class="tl-t">0:00</div><div class="tl-b"><h3>The scan</h3><p>They read the card because it doesn't say "upload your photos here". It says <span class="he">&#1497;&#1513; &#1500;&#1498; 15 &#1510;&#1497;&#1500;&#1493;&#1502;&#1497;&#1501;. &#1488;&#1500; &#1514;&#1489;&#1494;&#1489;&#1494; &#1488;&#1493;&#1514;&#1501;.</span> The camera opens instantly &mdash; no splash, no logo animation, no "welcome to". The viewfinder is already live behind the first screen.</p></div></div>
+    <div class="tl-row"><div class="tl-t">0:08</div><div class="tl-b"><h3>Who are you</h3><p>First name. That's the entire required form. Then one optional tap: <b>which table?</b> &mdash; presented as a grid of numbers, not a text field. Table is worth asking for because it powers table albums, table awards, and a printable table photo book later, all without touching biometrics.</p></div></div>
+    <div class="tl-row"><div class="tl-t">0:20</div><div class="tl-b"><h3>First frame</h3><p>They take a photo. Flash fires, shutter sounds, phone buzzes, the counter ticks <span class="mono">15 &rarr; 14</span> with a mechanical film-advance motion. <b>No preview appears.</b> Just: <span class="he">&#1508;&#1512;&#1497;&#1497;&#1501; 1 &#1504;&#1513;&#1502;&#1512;.</span> The whole interaction is under 400ms and it must feel better than their native camera app, or the product is dead.</p></div></div>
+    <div class="tl-row"><div class="tl-t">0:35</div><div class="tl-b"><h3>The ask, at the right moment</h3><p>Now &mdash; after the first shot, when they're invested, and not before &mdash; a single line: <span class="he">&#1500;&#1488;&#1503; &#1500;&#1513;&#1500;&#1493;&#1495; &#1500;&#1498; &#1488;&#1514; &#1492;&#1514;&#1502;&#1493;&#1504;&#1493;&#1514; &#1502;&#1495;&#1512;?</span> Phone or email. Skippable. This solves reveal delivery, device loss, and hands you a list of ~150 wedding-age contacts per event. See <a href="#s8">08</a>.</p></div></div>
+    <div class="tl-row"><div class="tl-t">22:15</div><div class="tl-b"><h3>Something develops</h3><p>Their first frames finish developing and appear in the Darkroom alongside everyone else's. This is the moment that decides whether they come back. It must feel like a discovery, not a notification.</p></div></div>
+    <div class="tl-row"><div class="tl-t">23:40</div><div class="tl-b"><h3>The mission</h3><p>The MC says the line, the projector turns red, and every phone in the room with the tab open flips to a takeover: <b>3 minutes. The best dancefloor photo of the night.</b> This is the peak of the evening's game layer, and it happens once or twice &mdash; not every twenty minutes.</p></div></div>
+    <div class="tl-row"><div class="tl-t">01:20</div><div class="tl-b"><h3>Last frame</h3><p>They shoot their final exposure. The counter reads <span class="mono">00</span>. Instead of a dead end, the roll ends with a question: <span class="he">&#1512;&#1493;&#1510;&#1492; &#1500;&#1492;&#1513;&#1488;&#1497;&#1512; &#1500;&#1492;&#1501; &#1502;&#1513;&#1492;&#1493;?</span> &mdash; a 15-second voice note. <b>This is the single best-placed prompt in the product.</b> The moment their roll ends is the moment they're most sentimental, and voice notes are the thing the couple will cry over.</p></div></div>
+    <div class="tl-row"><div class="tl-t">10:00</div><div class="tl-b"><h3>Developed</h3><p>A message arrives. Not "your album is ready" &mdash; <span class="he">&#1492;&#1495;&#1514;&#1493;&#1504;&#1492; &#1513;&#1500; &#1502;&#1497;&#1497;&#1492; &#1493;&#1491;&#1504;&#1497;&#1488;&#1500; &#1508;&#1493;&#1514;&#1495;&#1492; &#127918;</span>. They open it hungover in bed, see the whole night, and then see the line that brings them back a third time: <b>we found 32 photos of you.</b></p></div></div>
+  </div>
+
+  <div class="call">
+    <p><b>The hardest number in this product is the scan rate.</b> Everything downstream is multiplied by it. Realistic target for a 350-guest Israeli wedding: 35&ndash;45% scan, and about 60% of those take more than three photos. That's ~130 photographers producing ~1,400 frames. Below 25% the Darkroom looks empty and the game layer collapses.</p>
+    <p>Four levers, in order of impact: <b>the MC saying one sentence</b> (worth more than everything else combined), the card design, bonus-film cards hidden around the venue, and seeding the Darkroom before guests arrive so it's never empty (see <a href="#s6">06</a>).</p>
+  </div>
+</section>
+
+<section id="s4">
+  <div class="fhead"><span class="fnum">04</span><h2>Core, optional, and cut</h2><span class="tag">Scope</span></div>
+  <p class="lead">Core means the product is broken without it. Optional means a couple can turn it off and still have a great wedding. Cut means it costs more than it returns.</p>
+  <div class="tscroll">
+  <table>
+    <thead><tr><th>Feature</th><th>Call</th><th>Reasoning</th></tr></thead>
+    <tbody>
+      <tr><td><b>Limited film (the roll)</b></td><td><span class="pill core">Core</span></td><td>The entire differentiator. Not configurable to "unlimited" &mdash; that option should not exist at any price.</td></tr>
+      <tr><td><b>No-preview shutter</b></td><td><span class="pill core">Core</span></td><td>Produces the honest, badly-framed, alive photos the whole pitch rests on.</td></tr>
+      <tr><td><b>Darkroom develop delay</b></td><td><span class="pill core">Core</span></td><td>Resolves the no-preview / live-feed contradiction. See <a href="#s5">05</a>.</td></tr>
+      <tr><td><b>Wedding visual style</b></td><td><span class="pill core">Core</span></td><td>Makes 1,400 photos from 130 phones look like one wedding. Cheap to build, enormous perceived value.</td></tr>
+      <tr><td><b>Next-day reveal</b></td><td><span class="pill core">Core</span></td><td>The emotional payload and the re-engagement engine in one.</td></tr>
+      <tr><td><b>Secret memories</b></td><td><span class="pill core">Core</span></td><td>One checkbox to build. Produces the most emotionally valuable content in the product.</td></tr>
+      <tr><td><b>Voice notes</b></td><td><span class="pill core">Core</span></td><td>Trivially cheap, and the thing couples will replay in ten years.</td></tr>
+      <tr><td><b>Camera Pass print kit</b></td><td><span class="pill core">Core</span></td><td>Without it the product has no distribution inside the venue.</td></tr>
+      <tr><td>Reactions</td><td><span class="pill core">Core</span></td><td>The input to awards. Four reactions, no counts shown publicly during the night.</td></tr>
+      <tr><td>Photo challenges</td><td><span class="pill core">Core</span></td><td>The reason to take shot #6 instead of stopping at #3. Pays out in film, not points.</td></tr>
+      <tr><td>Awards</td><td><span class="pill core">Core</span></td><td>Cheap to compute, and the primary shareable artifact.</td></tr>
+      <tr><td>Venue screen</td><td><span class="pill core">Core</span></td><td>Reclassified from optional. It's the notification channel; without it live mechanics reach nobody.</td></tr>
+      <tr><td>Ceremony Mode</td><td><span class="pill core">Core</span></td><td>New &mdash; see <a href="#s16">16</a>. The feature that makes venues and photographers recommend you instead of resent you.</td></tr>
+      <tr><td>Live missions</td><td><span class="pill opt">Optional</span></td><td>Excellent when a room is warm, embarrassing when it isn't. MC-triggered only, never on a timer.</td></tr>
+      <tr><td>Table albums</td><td><span class="pill opt">Optional</span></td><td>Free byproduct of asking for a table number. Also the best print upsell.</td></tr>
+      <tr><td>Photographer lane</td><td><span class="pill opt">Optional</span></td><td>Pro drops sneak-peeks into the Darkroom at 01:00. Turns the competitor into a channel.</td></tr>
+      <tr><td>AI recap &amp; smart search</td><td><span class="pill late">Post-MVP</span></td><td>Real value, but only above ~800 photos, and it can't be evaluated without real weddings' worth of data.</td></tr>
+      <tr><td>Personal albums (face)</td><td><span class="pill late">Post-MVP</span></td><td>Biometric processing. A non-biometric version ships in MVP: your shots + your table + tagged-in.</td></tr>
+      <tr><td>Anniversary capsule</td><td><span class="pill late">Post-MVP</span></td><td>Needs a year of real customers before it can fire. Build the data model for it now.</td></tr>
+      <tr><td>Live ranked leaderboard</td><td><span class="pill opt">Off by default</span></td><td>Tacky at a wedding, excludes older guests, creates competitive behaviour during the ceremony. Awards give the same anticipation without the visible ranking.</td></tr>
+      <tr><td>Guest video</td><td><span class="pill cut">Cut</span></td><td>Breaks the film metaphor, multiplies storage 40&times;, and video is what phones already do well.</td></tr>
+      <tr><td>Comments</td><td><span class="pill cut">Cut</span></td><td>Deliberate anti-feature. Reactions carry no risk; a comment thread at a wedding is a liability. Say so publicly &mdash; it's a positioning statement.</td></tr>
+      <tr><td>Guest accounts</td><td><span class="pill cut">Cut</span></td><td>Every field is a percentage of guests lost.</td></tr>
+      <tr><td>Battle bracket voting</td><td><span class="pill cut">Cut from MVP</span></td><td>Needs 60+ simultaneous online guests to not feel dead. Ship the single-round mission first, measure, then decide.</td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+<section id="s5">
+  <div class="fhead"><span class="fnum">05</span><h2>The game, rebuilt around film</h2><span class="tag">Mechanics</span></div>
+  <p class="lead">The brief has two parallel economies &mdash; shots and points &mdash; and neither is doing much work. Collapse them into one.</p>
+
+  <h3>Film is the currency</h3>
+  <p class="prose">Points are abstract. Film is the thing the guest already cares about, already sees on every screen, and already fears running out of. So <strong>every reward in the product pays out in film</strong>. Completing a challenge gives you exposures. Winning a mission gives you exposures. Your photo getting reactions gives you exposures.</p>
+  <p class="prose">This does three jobs at once. It removes the product's most predictable complaint &mdash; "I ran out and now it's useless" becomes "I need to complete something to get more". It makes challenges genuinely motivating without a leaderboard. And it gives the reward moment real texture: <span class="mono">+2&nbsp;EXP</span> landing on the counter with a film-advance sound is a far better feeling than <span class="mono">+40&nbsp;pts</span>.</p>
+
+  <div class="tscroll">
+  <table>
+    <thead><tr><th>Action</th><th>Payout</th><th>Why this number</th></tr></thead>
+    <tbody>
+      <tr><td>Starting roll</td><td><b>15 EXP</b></td><td>Enough to be generous, few enough to be deliberate.</td></tr>
+      <tr><td>Complete a challenge</td><td><b>+2 EXP</b></td><td>Net positive after the shot it costs &mdash; challenges should feel free.</td></tr>
+      <tr><td>Your photo passes 10 reactions</td><td><b>+1 EXP</b></td><td>Rewards quality without requiring you to check.</td></tr>
+      <tr><td>Win a live mission</td><td><b>+5 EXP</b></td><td>Large enough to chase, rare enough not to inflate.</td></tr>
+      <tr><td>Find a hidden Camera Pass</td><td><b>+3 EXP</b></td><td>The physical/digital crossover. See below.</td></tr>
+      <tr><td>Leave a voice note</td><td><b>+2 EXP</b></td><td>Pays guests to give the couple the most valuable content in the product.</td></tr>
+      <tr><td>Hard cap</td><td><b>40 EXP</b></td><td>Stops one hyperactive cousin producing a third of the wedding.</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3>Hidden film &mdash; the mechanic that moves people around the room</h3>
+  <p class="prose">Print a handful of extra Camera Passes and hide them: behind the bar, on the smoking balcony, at the grandparents' table, backstage with the band. Scanning one gives <span class="mono">+3&nbsp;EXP</span> and unlocks a location-specific challenge. It costs nothing, it turns the printed card from a one-time entry point into a collectible, and it physically distributes photographers into the corners of the wedding where the interesting things are actually happening &mdash; which is precisely the content the professional never gets.</p>
+
+  <h3>Three camera modes, and why the middle one is the product</h3>
+  <div class="grid g3">
+    <div class="card">
+      <span class="kicker">Mode A</span>
+      <h3>Film Roll</h3>
+      <p>Nothing is visible to anyone until the reveal. The purest expression of the idea, and the quietest. No reactions, no live screen content, no game. Right for small, elegant, older weddings.</p>
+    </div>
+    <div class="card hot">
+      <span class="kicker">Mode B &middot; default &middot; the signature</span>
+      <h3>Darkroom</h3>
+      <p>A photo becomes visible to everyone about 25 minutes after it's taken. No retakes, no instant gratification &mdash; but the night still unfolds live, always lagging, slightly dreamlike. Guests come back because something of theirs is developing.</p>
+    </div>
+    <div class="card">
+      <span class="kicker">Mode C</span>
+      <h3>Instant</h3>
+      <p>Everything visible immediately. Loses the magic, keeps the shot limit. Exists because some couples will insist, and because it's right for an engagement party or a bachelorette.</p>
+    </div>
+  </div>
+  <div class="call">
+    <p><b>The develop delay is the invention here.</b> It's the only design that satisfies every constraint at once: no retakes (the photo is gone the instant you press the button), a live social layer (something new is always appearing), a reason to reopen the tab (yours is developing), content for the venue screen, and a Darkroom that fills gradually all night instead of dumping at 10:00 the next morning.</p>
+    <p>Make the delay <b>visible and anticipatory</b>: a developing frame is a dark rectangle with a countdown and a faint chemical shimmer, not a grey skeleton. Guests should be able to see their own photos in the queue, developing, without seeing what's in them.</p>
+  </div>
+
+  <h3>Challenges: packs, not lists</h3>
+  <p class="prose">Two kinds. <strong>Standing challenges</strong> are open all night &mdash; a full-table photo, someone crying, the best-dressed guest, a selfie with someone you met tonight. <strong>Timed challenges</strong> unlock against the night's schedule the couple entered at setup: the first dance, the parents dancing, the last twenty minutes.</p>
+  <p class="prose">Ship packs of six to eight written by someone with taste, and let the couple delete and add. An <strong>Israeli Wedding</strong> pack should exist and should be written in Hebrew by someone who has been to one &mdash; <span class="he">&#1502;&#1497;&#1513;&#1492;&#1493; &#1506;&#1500; &#1492;&#1499;&#1514;&#1508;&#1497;&#1497;&#1501;</span>, <span class="he">&#1492;&#1492;&#1493;&#1512;&#1497;&#1501; &#1512;&#1493;&#1511;&#1491;&#1497;&#1501;</span>, <span class="he">&#1502;&#1497; &#1489;&#1499;&#1492; &#1512;&#1488;&#1513;&#1493;&#1503;</span>, <span class="he">&#1492;&#1513;&#1493;&#1500;&#1495;&#1503; &#1513;&#1500;&#1488; &#1511;&#1501; &#1499;&#1500; &#1492;&#1506;&#1512;&#1489;</span>. Localised humour is not a translation task and shouldn't be treated as one.</p>
+  <p class="prose">One rule that matters: <strong>a challenge never costs an extra shot</strong>. You shoot from your existing roll and get more back for completing it. Charging extra film for a challenge makes guests avoid them.</p>
+
+  <h3>Live missions, done honestly</h3>
+  <p class="prose">A three-minute mission with a voting round is a genuinely great party mechanic, and it will fail silently if nobody knows it started. So: <strong>MC- or couple-triggered only, never on a timer</strong>, always accompanied by the venue screen going red, and limited to two or three across the night. Structure: 3 minutes to shoot, 2 minutes of voting (submissions bypass the develop delay &mdash; the one exception), winner on the projector with their name. Winner gets <span class="mono">+5&nbsp;EXP</span> and a share card.</p>
+  <p class="prose">Good mission types: best dancefloor photo, best group photo, <em>worst</em> photo of the night (deliberately &mdash; it produces the funniest submissions), best photo of someone who doesn't know you're taking it, best table.</p>
+
+  <h3>The leaderboard question</h3>
+  <p class="prose">Default it off. A visible ranking during a wedding turns a warm room into a competition and structurally excludes anyone over sixty. The same anticipation is available for free through <strong>awards revealed at the end</strong> &mdash; nobody sees the standings, everybody finds out who won at 01:45 on the projector. If a couple wants the leaderboard, give it to them, but as a <strong>Top 5 only</strong>, never a full ranking. Nobody needs to learn they're 47th at a wedding.</p>
+</section>
+
+<section id="s6">
+  <div class="fhead"><span class="fnum">06</span><h2>Getting guests to actually participate</h2><span class="tag">Adoption</span></div>
+  <p class="lead">Every feature in this document is multiplied by the scan rate, and the scan rate is decided by things that mostly aren't software.</p>
+
+  <div class="grid g2">
+    <div class="card hot">
+      <span class="kicker">Highest leverage</span>
+      <h3>One sentence from the MC</h3>
+      <p>"There's a card on your table. You each have fifteen photos tonight &mdash; the couple sees them tomorrow morning." Thirty seconds from the person the whole room is already listening to. Ship a printed MC script in the setup PDF and make it impossible to miss. Worth more than every other adoption lever combined.</p>
+    </div>
+    <div class="card">
+      <span class="kicker">Cold start</span>
+      <h3>Never show an empty Darkroom</h3>
+      <p>The roll opens two hours before the ceremony for the wedding party &mdash; getting-ready shots, the parents arriving, the nervous ten minutes before. By the time the first guest scans, the Darkroom already holds forty photos and reads as a party in progress. It also captures a window the photographer usually bills extra for.</p>
+    </div>
+    <div class="card">
+      <span class="kicker">Second visit</span>
+      <h3>Something is always developing</h3>
+      <p>The develop timer is a built-in reason to reopen the tab. Reinforce it once, gently, at the moment their first frames land &mdash; a subtle in-tab change, never a permission prompt.</p>
+    </div>
+    <div class="card">
+      <span class="kicker">Third visit</span>
+      <h3>Somebody reacted to yours</h3>
+      <p>Show it in the Darkroom, not as a notification. "Three people loved your frame" on your own photo when they next open the tab is enough.</p>
+    </div>
+    <div class="card">
+      <span class="kicker">Physical</span>
+      <h3>Passes everywhere, not just tables</h3>
+      <p>Entrance poster, bar, bathroom mirrors, dancefloor edge, dessert table, smoking area. Each one is a fresh entry point for someone who wasn't sitting down when the MC spoke.</p>
+    </div>
+    <div class="card">
+      <span class="kicker">Design</span>
+      <h3>A card that provokes</h3>
+      <p><span class="he">&#1497;&#1513; &#1500;&#1498; 15 &#1510;&#1497;&#1500;&#1493;&#1502;&#1497;&#1501;. &#1488;&#1500; &#1514;&#1489;&#1494;&#1489;&#1494; &#1488;&#1493;&#1514;&#1501;.</span> &mdash; a challenge, not an instruction. "Capture what the photographer won't" as the second line. The card shouldn't explain the product; it should make scanning irresistible.</p>
+    </div>
+  </div>
+
+  <h4>What to do about the guests who won't participate at all</h4>
+  <p class="prose">Roughly half the room won't scan, and a meaningful fraction of those are older relatives holding the most emotionally valuable perspective in the building. Two cheap interventions: <strong>a Camera Pass at the grandparents' table with a bigger QR and larger type</strong>, and a mission built to bridge it &mdash; "get someone over 60 to take a photo of you" pays film to the young guest and quietly hands a phone to the person who was never going to scan.</p>
+</section>
+
+<section id="s7">
+  <div class="fhead"><span class="fnum">07</span><h2>Where the feeling lives</h2><span class="tag">Emotion</span></div>
+  <p class="lead">Peak-end: people compress an experience into its most intense moment and its last one. This product has four peaks it can control precisely.</p>
+
+  <div class="tl">
+    <div class="tl-row"><div class="tl-t">Peak 1</div><div class="tl-b"><h3>The shutter</h3><p>The most important 400 milliseconds in the product. Screen flash, a real mechanical shutter sound, a haptic pulse, the counter physically advancing like a film wind, and the frame flying off toward the darkroom. It has to feel better than their native camera. If a guest presses it twice just because it's satisfying, everything downstream works.</p></div></div>
+    <div class="tl-row"><div class="tl-t">Peak 2</div><div class="tl-b"><h3>Your frames developed</h3><p>Around 22:15 the first of their own photos resolves. Do this as a physical develop animation &mdash; the image emerging from black through chemical warmth &mdash; not a fade-in. Three seconds, once per photo, and they'll watch every one.</p></div></div>
+    <div class="tl-row"><div class="tl-t">Peak 3</div><div class="tl-b"><h3>Developed &mdash; the couple, 10:00</h3><p>See <a href="#s10">10</a>. Built as a single directed sequence, not a page load.</p></div></div>
+    <div class="tl-row"><div class="tl-t">Peak 4</div><div class="tl-b"><h3>"We found 32 photos of you"</h3><p>The guest's own peak, the next day. Almost nobody in their life has ever handed them 32 photos of themselves having a good time. This is the most shareable moment in the product, and it belongs to the guests, not the couple.</p></div></div>
+    <div class="tl-row"><div class="tl-t">The end</div><div class="tl-b"><h3>The last frame</h3><p>Endings are remembered as much as peaks, and this product has a built-in one: running out of film. Don't waste it on an error state. <span class="he">&#1494;&#1492;&#1493;. &#1492;&#1508;&#1497;&#1500;&#1501; &#1504;&#1490;&#1502;&#1512;.</span> &mdash; the roll is finished, here's what you shot tonight, and would you like to leave them something? Voice note, and out.</p></div></div>
+  </div>
+
+  <h3>The four things that will actually make them cry</h3>
+  <ul class="clean">
+    <li><strong>Voice notes.</strong> A drunk friend at 01:00 saying something true. No photograph competes with this, and no professional package includes it. If one feature justifies the price, it's this one.</li>
+    <li><strong>Secret memories.</strong> Content deliberately withheld from the room and given only to them. The <em>secrecy</em> is the emotional mechanism, not the content.</li>
+    <li><strong>Being photographed by people who love you.</strong> A professional photograph is technically better and emotionally neutral. A slightly blurry photo taken by your sister from three metres away is not.</li>
+    <li><strong>The parts they missed.</strong> A couple sees perhaps 30% of their own wedding. The photos from table 14 at 23:40 are, genuinely, new information about their own night.</li>
+  </ul>
+
+  <div class="call"><p><b>Don't over-decorate the emotion.</b> The strongest moments in this product are quiet &mdash; a voice, a bad photo, a sentence. Confetti animations and heavy copy will cheapen them. Save the motion for the game layer and let the memory layer be still.</p></div>
+</section>
+
+<section id="s8">
+  <div class="fhead"><span class="fnum">08</span><h2>How it spreads</h2><span class="tag">Growth</span></div>
+  <p class="lead">Weddings are the best viral substrate in consumer software: 350 people, most of them the right age, all experiencing the product at once, in a category where people copy what they saw at the last one.</p>
+
+  <h3>Loop 1 &mdash; guest becomes couple (the main one)</h3>
+  <p class="prose">Every wedding puts the product in front of ~150 people who gave you a phone number, in a room full of people at the exact life stage where they might be next. Israeli weddings are dense with this: a group of friends gets married across two years and attends all of each other's weddings.</p>
+  <p class="prose">The mechanism isn't an ad. It's a single line at the bottom of a guest's personal album the next morning: <strong>"Getting married? Maya &amp; Daniel get a credit if you use their camera."</strong> Both sides benefit, the couple has a reason to forward it, and the guest is asked at the one moment they feel most positive about weddings in general.</p>
+
+  <h3>Loop 2 &mdash; the award card</h3>
+  <p class="prose">Winning "Funniest Photo at Maya &amp; Daniel's wedding" produces a share asset that is genuinely about the guest, not about you. Make it a <strong>stylised film print</strong> &mdash; their winning photo, the award, the couple's names, and the film edge rebate along the border. That edge marking is your logo, and it will be on Instagram at 02:00 while the wedding is still going.</p>
+
+  <h3>Loop 3 &mdash; the film rebate (the quiet one)</h3>
+  <p class="prose">Real film has text printed along the edge of the negative: stock, frame number, manufacturer. Print the same thing on every exported photo &mdash; <span class="mono">SHOTLY 400 &middot; MAYA &amp; DANIEL &middot; 23</span> &mdash; in tiny orange type down the edge. It's beautiful, it's authentic to the medium, guests won't crop it out because it looks intentional, and it's a watermark nobody experiences as a watermark. The highest-ROI branding decision in the product.</p>
+
+  <h3>Loop 4 &mdash; the venue and the supplier chain</h3>
+  <p class="prose">A venue hosts 120 weddings a year. A photographer shoots 40. A DJ works 60. All three see the Camera Pass on every table, and all three are asked for recommendations by every couple they meet. Give them a wholesale price and a referral code. <strong>This will outperform paid acquisition by a wide margin in the Israeli market</strong>, where the wedding supplier network is small and highly interconnected.</p>
+  <p class="prose">The photographer is the delicate one. Framed wrong, you're a competitor putting phones in the air. Framed right &mdash; Ceremony Mode protects their ceremony, the photographer lane lets them deliver sneak-peeks the same night, and the product explicitly says <em>they</em> capture the wedding &mdash; you become something they sell as an add-on at &#8362;1,200 having paid &#8362;500.</p>
+
+  <h3>Loop 5 &mdash; the people who weren't there</h3>
+  <p class="prose">Every wedding has fifty people who couldn't come &mdash; grandparents abroad, a friend with a newborn, family who couldn't travel. A <strong>"watch it from wherever you are"</strong> link, sent by the couple, is emotionally strong and drops the product in front of an entirely new set of people at zero cost.</p>
+</section>
+
+<section id="s9">
+  <div class="fhead"><span class="fnum">09</span><h2>Privacy, moderation, and the things that go wrong</h2><span class="tag">Trust</span></div>
+  <p class="lead">A wedding contains children, exes, employers, religious relatives, and at least one person who should not be photographed at 01:30. Get this wrong once and it's the only thing anyone remembers.</p>
+
+  <h3>The moderation stack</h3>
+  <ul class="clean">
+    <li><strong>Automatic screening on every upload.</strong> Explicit-content classification before a photo can reach the Darkroom or the projector. Non-negotiable, cheap, and the only thing standing between you and an incident on a three-metre screen.</li>
+    <li><strong>A hold buffer on the venue screen.</strong> The projector runs 60&ndash;90 seconds behind the Darkroom. That window is the difference between a moderator catching something and a room seeing it.</li>
+    <li><strong>Best Man Mode.</strong> Moderation delegated to one or two friends, never the couple. Two buttons: keep, remove. Removal is instant and silent &mdash; the photographer of the removed frame is never told, because telling them starts an argument at a wedding.</li>
+    <li><strong>Long-press to report on every photo.</strong> Two reports auto-hide pending review. Guests are the fastest moderators in the room.</li>
+    <li><strong>Approval-before-public mode</strong> for couples who want it, off by default. It kills the live feeling and most couples won't need it, but conservative and religious weddings will, and it should be one toggle.</li>
+  </ul>
+
+  <h3>The consent question, answered properly</h3>
+  <p class="prose">Photographing people at a private event you were invited to is normal and legal; the risk is in what the product does <em>with</em> the photos afterwards. Three concrete positions:</p>
+  <ul class="clean">
+    <li><strong>The event is private by default and stays private.</strong> Unlisted link, no public URLs, no discovery, no indexing, no cross-wedding anything. A photo taken at one wedding never appears anywhere else.</li>
+    <li><strong>Face grouping is opt-in per guest and per wedding.</strong> When personal albums ship: the guest opts in by taking one selfie, the face index is scoped to that single event, it's deleted with the event, and it's never used to identify anyone across weddings. Under Israeli privacy law and GDPR this is biometric data &mdash; treat it that way, get explicit consent, don't default it on. The <b>non-biometric version ships first</b>: your own shots, your table's shots, and photos other guests tag you in. That covers most of the emotional payload with none of the exposure.</li>
+    <li><strong>Anyone can remove themselves.</strong> A visible "remove this photo of me" on every frame, routing to the moderator, plus a guest-side "delete everything I took" that actually deletes. This is a legal requirement and also just correct.</li>
+  </ul>
+
+  <h3>Secret memories need a rule</h3>
+  <p class="prose">A photo marked <span class="he">&#1512;&#1511; &#1500;&#1494;&#1493;&#1490;</span> is invisible to every guest, to the venue screen, to the awards, and to the moderator queue unless auto-flagged. It goes to exactly two people. Say this in one sentence on the screen where the guest makes the choice, because the entire value of the feature is that they believe it.</p>
+
+  <h3>Retention, in plain language</h3>
+  <p class="prose">Originals kept for the tier's archive period, then a warning email, then a downgrade to web resolution &mdash; never silent deletion of someone's wedding. Guest contact details are used for the reveal and, absent a checkbox they actually saw, for nothing else. Publish the retention period in the couple's dashboard rather than burying it in terms nobody reads.</p>
+</section>
+
+<section id="s10">
+  <div class="fhead"><span class="fnum">10</span><h2>The reveal, beat by beat</h2><span class="tag">The peak</span></div>
+  <p class="lead">This is the moment the product is sold on. Build it as a single directed sequence &mdash; closer to a title sequence than a page load &mdash; and don't make it skippable on the first view.</p>
+
+  <div class="tl">
+    <div class="tl-row"><div class="tl-t">Before</div><div class="tl-b"><h3>The waiting room</h3><p>From 02:00 to 10:00 the link doesn't 404 and it doesn't show a gallery. It shows a dark screen, a soft chemical shimmer, and a countdown: <span class="he">&#1502;&#1508;&#1514;&#1495;&#1497;&#1501;.</span> Anyone who opens it early &mdash; and hungover guests will, at 06:00 &mdash; gets an object rather than a locked door. Add the counts, climbing slowly: frames, voices, secrets.</p></div></div>
+    <div class="tl-row"><div class="tl-t">Beat 1</div><div class="tl-b"><h3>Arrival</h3><p>The message lands at 10:00 &mdash; not "your album is ready", which is a Dropbox sentence. <span class="he">&#1492;&#1495;&#1514;&#1493;&#1504;&#1492; &#1513;&#1500;&#1499;&#1501; &#1508;&#1493;&#1514;&#1495;&#1492; &#127918;</span> for the couple, <span class="he">&#1492;&#1495;&#1514;&#1493;&#1504;&#1492; &#1513;&#1500; &#1502;&#1497;&#1497;&#1492; &#1493;&#1491;&#1504;&#1497;&#1488;&#1500; &#1508;&#1493;&#1514;&#1495;&#1492;</span> for guests. SMS in Israel; email as fallback.</p></div></div>
+    <div class="tl-row"><div class="tl-t">Beat 2</div><div class="tl-b"><h3>The numbers, one at a time</h3><p>Not a stats grid &mdash; a sequence. Each figure counts up, holds, dissolves into the next. <span class="mono">1,847 frames</span>, <span class="mono">143 photographers</span>, <span class="mono">186 secret memories</span>, <span class="mono">73 voices</span>, <span class="mono">46 challenges</span>. Twelve seconds total. Let it breathe.</p></div></div>
+    <div class="tl-row"><div class="tl-t">Beat 3</div><div class="tl-b"><h3>One photo</h3><p>Before any grid: a single full-bleed frame, developing on screen &mdash; the most-reacted photo of the night. Nothing else on the page. This is the whole product in one image and it earns three seconds of silence.</p></div></div>
+    <div class="tl-row"><div class="tl-t">Beat 4</div><div class="tl-b"><h3>A voice</h3><p>Then it plays one voice note. Someone's friend, ten seconds, slightly too loud, music in the background. <b>This is the moment that converts a nice product into one people tell their friends about</b>, and it costs nothing to build.</p></div></div>
+    <div class="tl-row"><div class="tl-t">Beat 5</div><div class="tl-b"><h3>The night, in order</h3><p>A vertical scroll through the evening in chapters keyed to the schedule they entered at setup &mdash; <span class="he">&#1500;&#1508;&#1504;&#1497;</span>, <span class="he">&#1492;&#1495;&#1493;&#1508;&#1492;</span>, <span class="he">&#1492;&#1488;&#1512;&#1493;&#1495;&#1492;</span>, <span class="he">&#1492;&#1512;&#1497;&#1511;&#1493;&#1491;&#1497;&#1501;</span>, <span class="he">&#1488;&#1495;&#1512;&#1497; &#1495;&#1510;&#1493;&#1514;</span>. Chronology is the correct structure: it's how they experienced it, and it's what makes 1,800 photos legible.</p></div></div>
+    <div class="tl-row"><div class="tl-t">Beat 6</div><div class="tl-b"><h3>The awards</h3><p>Seven, revealed one per screen with the photographer's name. Because it's the next morning, this reads as a warm summary rather than a competition.</p></div></div>
+    <div class="tl-row"><div class="tl-t">Beat 7</div><div class="tl-b"><h3>Then, and only then, everything</h3><p>The full grid, the search, the downloads, the secret memories. All the utility, after all the emotion. Reverse this order and the sequence becomes a loading screen in front of a file browser.</p></div></div>
+  </div>
+
+  <div class="call">
+    <p><b>The guest reveal is a different edit of the same night</b> and it matters more than it sounds. A guest doesn't get the couple's story &mdash; they get the wedding's headline number, the three best photos of the night, <b>their own roll, developed</b>, the photos they appear in, and any award they won. Present their roll as a contact sheet with their name on it. It's a personal object, and personal objects get shared.</p>
+  </div>
+
+  <h4>One restraint</h4>
+  <p class="prose">No music autoplay on the couple's reveal. It will fire in a quiet room, on a phone at full volume, at an unpredictable moment. Offer it as a play button on the first screen and let it run once they've chosen. The voice note in Beat 4 <em>should</em> be the first sound they hear, and it should require a tap.</p>
+</section>
+
+<section id="s11">
+  <div class="fhead"><span class="fnum">11</span><h2>The MVP</h2><span class="tag">Scope</span></div>
+  <p class="lead">Target: one paying wedding, end to end, with nothing embarrassing in it. Everything here exists because removing it breaks the pitch.</p>
+
+  <div class="grid g2">
+    <div class="card hot"><span class="kicker">In</span><h3>Guest camera</h3><p>Scan, name and table, live viewfinder, shutter with flash and sound and haptic and counter advance, no preview, offline-tolerant upload queue, film counter everywhere. Hebrew, RTL, one-handed.</p></div>
+    <div class="card hot"><span class="kicker">In</span><h3>Darkroom mode</h3><p>25-minute develop delay, develop animation, the shared feed, four reactions, long-press to report. Plus Film Roll and Instant as alternatives.</p></div>
+    <div class="card hot"><span class="kicker">In</span><h3>Challenges + film economy</h3><p>Five curated packs, standing and timed, paying out in exposures. No points, no leaderboard.</p></div>
+    <div class="card hot"><span class="kicker">In</span><h3>Secret memories &amp; voice notes</h3><p>A lock toggle on the shutter, and the end-of-roll voice prompt. The cheapest emotional payload per line of code in the entire product.</p></div>
+    <div class="card hot"><span class="kicker">In</span><h3>Ceremony Mode</h3><p>Camera locks during the chuppah with a line on screen. One timer and one screen state; disproportionate trust return.</p></div>
+    <div class="card hot"><span class="kicker">In</span><h3>Venue screen</h3><p>One elegant auto-rotating projector page: developing frames, top photos, the current challenge, guest count, awards at the end. 90-second hold buffer.</p></div>
+    <div class="card hot"><span class="kicker">In</span><h3>Awards</h3><p>Seven, computed from reactions, revealed at the end of the night on the projector and again in the reveal. Share cards for winners.</p></div>
+    <div class="card hot"><span class="kicker">In</span><h3>The reveal</h3><p>Waiting room, the directed sequence, chronological chapters, guest edition, per-guest roll as a contact sheet, "photos you're in" via table and tagging.</p></div>
+    <div class="card hot"><span class="kicker">In</span><h3>Couple studio</h3><p>The seven-step setup, the Camera Pass print kit with MC script, a glanceable live view with one mission button, and the post-wedding memory dashboard with full-resolution download.</p></div>
+    <div class="card hot"><span class="kicker">In</span><h3>Styles</h3><p>Six, not fourteen. Do six extremely well: Disposable 2000s, Warm Kodak, B&amp;W Elegant, Polaroid, Tel Aviv Night, Cinematic. Applied at display, reversible after the fact.</p></div>
+    <div class="card hot"><span class="kicker">In</span><h3>Payments</h3><p>Three tiers, one-time, Israeli cards. Free to build, pay to activate.</p></div>
+    <div class="card"><span class="kicker">Out &mdash; deliberately</span><h3>Not in v1</h3><p>AI recap and semantic search. Face-based albums. Mission voting brackets. Leaderboard. Anniversary capsule. Print products. Guest video. Comments. Native apps. Any language beyond Hebrew and English.</p></div>
+  </div>
+
+  <h4>The two things that will actually take the time</h4>
+  <p class="prose"><strong>The camera.</strong> Not the UI &mdash; the reliability. On-device compression, an IndexedDB queue that survives a tab kill, retry with backoff, honest state when 340 people share one overloaded cell, and iOS Safari's particular opinions about <span class="mono">getUserMedia</span>. Budget more here than feels reasonable; this single component decides whether the product works at all.</p>
+  <p class="prose"><strong>The reveal sequence.</strong> It's what the product is sold on, and it's a directed animation &mdash; a different discipline from the rest of the app. Build it last, but budget it properly rather than letting it decay into a stats page with a fade-in.</p>
+</section>
+
+<section id="s12">
+  <div class="fhead"><span class="fnum">12</span><h2>After the MVP</h2><span class="tag">Roadmap</span></div>
+
+  <h4>Wave 1 &mdash; after roughly fifteen real weddings</h4>
+  <ul class="clean">
+    <li><strong>AI recap and smart search.</strong> The categories couples actually ask for &mdash; us together, the parents, people crying, the dancefloor, group photos, late-night chaos &mdash; plus a 60-second recap cut to a track they choose. Only worth building once you've seen what a real wedding's photo set looks like.</li>
+    <li><strong>Print products.</strong> Lead with the <strong>contact sheet poster</strong>: every frame from the night as thumbnails on one large print with real edge markings. Beautiful, cheap to produce, perfectly on-brand, and no competitor has it. Then the photo book and the print packs.</li>
+    <li><strong>The photographer lane.</strong> A pro upload link that drops twenty sneak-peeks into the Darkroom at 01:00. Converts your most dangerous critic into your best channel.</li>
+    <li><strong>Live mission voting.</strong> Now that you know how many guests are online simultaneously at a real wedding, decide whether the bracket is viable.</li>
+  </ul>
+
+  <h4>Wave 2 &mdash; the year-two product</h4>
+  <ul class="clean">
+    <li><strong>Personal guest albums with opt-in face grouping.</strong> The highest-value feature in this document and the one with the most legal surface. Ship it when you can do consent properly.</li>
+    <li><strong>The anniversary capsule.</strong> Hold back a set of photos and voice notes; unlock them one year later. Retention, a second emotional peak, and a reason the archive is worth paying for.</li>
+    <li><strong>Beyond weddings.</strong> The mechanic isn't wedding-specific &mdash; bar mitzvahs, birthdays, army reunions, company events, festivals. Israel has a very high density of large private events, and a bar mitzvah is the same product with different copy. Don't dilute the brand until weddings work, then expand deliberately.</li>
+    <li><strong>Venue and supplier portal.</strong> Once venues are referring, give them their own account, referral tracking, and a co-branded pass.</li>
+  </ul>
+
+  <h4>Things to deliberately never build</h4>
+  <p class="prose">Unlimited photos at any price. Comments. A social graph. Follows. Cross-wedding feeds. Public weddings. A native app. Each makes the product bigger and worse, and the moment you add unlimited uploads you're competing with six funded companies on their terms instead of yours.</p>
+</section>
+
+<section id="s13">
+  <div class="fhead"><span class="fnum">13</span><h2>The signature</h2><span class="tag">Brand</span></div>
+  <p class="lead">A product gets one sentence in someone's memory. This one should get: <em>the wedding where you only had fifteen photos.</em></p>
+
+  <div class="verdict" style="margin-top:8px">
+    <h2>The Roll</h2>
+    <p><strong>Fifteen shots. No do-overs. They develop in the morning.</strong> Not the album, not the AI, not the challenges &mdash; the constraint and the delay, together. That's the sentence a guest repeats at the next wedding, and it's the thing no competitor can copy without abandoning their own positioning, because every one of them sells "capture everything".</p>
+    <p>The constraint is also the product's honesty. Fifteen photos taken carefully by someone who loves you is a better artifact than four hundred taken carelessly, and everyone knows it the moment it's said out loud.</p>
+  </div>
+
+  <h3>The visual signature: the edge rebate</h3>
+  <p class="prose">Every brand needs a mark that appears where the product does. Yours is the <strong>film edge marking</strong> &mdash; the tiny orange type printed along the border of a negative. <span class="mono">SHOTLY 400 &middot; MAYA &amp; DANIEL &middot; 23</span>. It goes on every exported photo, every share card, the Camera Pass, the contact sheet poster, and along the top of the venue screen. It's authentic to the medium rather than pasted on top of it, so nobody experiences it as a watermark and nobody crops it out.</p>
+
+  <h3>The physical signature: the Camera Pass</h3>
+  <p class="prose">The card on the table is the most-seen object the brand owns &mdash; 350 people per wedding, at eye level, for five hours. Design it as an actual object: the format of a film box, the shot count in large type, the challenge line, the QR, and the edge rebate along the bottom. When another supplier picks one up, it should read as a designed product, not a printed instruction.</p>
+
+  <div class="grid g3">
+    <div class="card"><span class="kicker">Say</span><h3>The counter</h3><p><span class="mono" style="color:var(--red);font-size:22px">08/15</span><br>Visible on every screen. It's the product's heartbeat and it should never be hidden behind a menu.</p></div>
+    <div class="card"><span class="kicker">Say</span><h3>The verb</h3><p><b>Develop.</b> Never "upload", "sync", "process" or "ready". The whole vocabulary &mdash; frames, roll, exposures, darkroom, developed, contact sheet &mdash; should be film language, consistently, everywhere.</p></div>
+    <div class="card"><span class="kicker">Don't say</span><h3>The banned words</h3><p>Album. Gallery. Upload. Share. Post. Feed. Users. Content. Every one of them drags the product back toward the category it's trying to escape.</p></div>
+  </div>
+</section>
+
+<section id="s14">
+  <div class="fhead"><span class="fnum">14</span><h2>Money</h2><span class="tag">Pricing</span></div>
+  <p class="lead">One-time per wedding, never a subscription. Nobody wants a recurring charge attached to their wedding, and a couple who cancels in month four leaves you holding their memories.</p>
+
+  <h3>The anchor that matters in Israel</h3>
+  <p class="prose">Don't price against software. Price against <strong>the magnet photographer</strong> &mdash; a standard Israeli wedding line item at roughly &#8362;2,500&ndash;4,000 for a booth producing fridge magnets. Next to that, &#8362;790 for a camera in every guest's hand producing 1,800 photos, voice notes and an album is an obvious yes. The wider frame &mdash; a &#8362;10,000 photographer inside a &#8362;120,000 wedding &mdash; means this is a rounding error the couple decides on emotionally, in about four minutes.</p>
+  <p class="prose">Gate on <strong>guest count first, features second</strong>. Guest count is the honest cost driver, it's a number couples already know, and it scales price with the size of the wedding automatically.</p>
+
+  <div class="tiers">
+    <div class="tier">
+      <div class="tname">The Roll</div>
+      <div class="tprice">&#8362;390<small>UP TO 150 GUESTS</small></div>
+      <ul>
+        <li>Guest camera, 15 exposures</li>
+        <li>All six wedding styles</li>
+        <li>Darkroom or Film Roll mode</li>
+        <li>Ceremony Mode</li>
+        <li>Secret memories</li>
+        <li>Next-day reveal</li>
+        <li>Camera Pass print kit</li>
+        <li>Full-resolution download, 60 days</li>
+      </ul>
+    </div>
+    <div class="tier pick">
+      <div class="tname">The Party</div>
+      <div class="tprice">&#8362;790<small>UP TO 400 GUESTS &middot; MOST WEDDINGS</small></div>
+      <ul>
+        <li>Everything in The Roll</li>
+        <li>Challenges and the film economy</li>
+        <li>Live missions</li>
+        <li>Wedding awards and share cards</li>
+        <li>The venue screen</li>
+        <li>Voice notes</li>
+        <li>Best Man Mode moderation</li>
+        <li>Table albums</li>
+        <li>Archive for 12 months</li>
+      </ul>
+    </div>
+    <div class="tier">
+      <div class="tname">The Director's Cut</div>
+      <div class="tprice">&#8362;1,490<small>UNLIMITED GUESTS</small></div>
+      <ul>
+        <li>Everything in The Party</li>
+        <li>AI recap film and smart search</li>
+        <li>Personal guest albums</li>
+        <li>Photographer lane</li>
+        <li>Anniversary capsule</li>
+        <li>&#8362;250 print credit</li>
+        <li>Permanent archive</li>
+        <li>Priority support on the night</li>
+      </ul>
+    </div>
+  </div>
+
+  <h4>Structural decisions</h4>
+  <ul class="clean">
+    <li><strong>Free to build, pay to activate.</strong> The entire setup, the style picker, the pass preview, the guest camera demo &mdash; all free. Payment gates the QR going live. By then the couple has designed their wedding's camera.</li>
+    <li><strong>Never charge guests. Never sell extra film.</strong> The instant a guest sees a payment screen at a wedding, the product is over. Extra film is earned, not bought &mdash; and that boundary is part of the brand.</li>
+    <li><strong>Late upgrade is the best revenue line you have.</strong> A couple two days before the wedding, excited, has very high willingness to upgrade. Make it one tap from the live view. Also allow upgrading <em>after</em> the wedding &mdash; someone who just watched their reveal will buy the AI recap and the permanent archive on the spot.</li>
+    <li><strong>Supplier wholesale.</strong> Photographers, venues and planners buy at &#8362;500 and resell at &#8362;1,200&ndash;1,500 as an add-on. Their margin buys you distribution you can't otherwise afford.</li>
+  </ul>
+
+  <h4>After the wedding, without becoming a store</h4>
+  <p class="prose">Post-event upsells appear <strong>once</strong>, after the reveal sequence, never during it, and never again unless asked for.</p>
+  <div class="tscroll">
+  <table>
+    <thead><tr><th>Product</th><th>Price</th><th>Why it belongs</th></tr></thead>
+    <tbody>
+      <tr><td><b>The contact sheet poster</b></td><td>&#8362;249</td><td>Every frame of the night as thumbnails on one 50&times;70 print with real edge markings. The flagship: unmistakably yours, cheap to make, impossible for an album company to copy convincingly.</td></tr>
+      <tr><td>Disposable print pack</td><td>&#8362;89</td><td>Forty prints in a film-box sleeve. Low price, high attach rate, and it puts a branded object on a shelf.</td></tr>
+      <tr><td>Guest photo book</td><td>&#8362;449</td><td>The best sixty frames, chronological, in the wedding's style.</td></tr>
+      <tr><td>Table books</td><td>&#8362;129 each</td><td>Table 7's night, as a gift back to those guests. Emotional, and the table data is already there.</td></tr>
+      <tr><td>The recap film</td><td>&#8362;299</td><td>Guest photos, the awards and the voice notes cut to their track. The voices are what make this worth paying for.</td></tr>
+      <tr><td>The wedding newspaper</td><td>&#8362;349</td><td>A one-off broadsheet: awards as headlines, photos as news, guest quotes. Sells on novelty and photographs beautifully.</td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<section id="s15">
+  <div class="fhead"><span class="fnum">15</span><h2>What could kill it</h2><span class="tag">Risk</span></div>
+  <p class="lead">In rough order of how likely each one is to actually happen.</p>
+
+  <div class="risk">
+    <div>
+      <span class="rl hi">Risk &middot; very likely</span>
+      <h3>Nobody scans</h3>
+      <p>The product is empty and the couple feels cheated. <b>Fix:</b> the MC script is a shipped deliverable, not a suggestion. Passes at seven locations, not one. Pre-seed the Darkroom with the getting-ready roll. Measure scan rate per wedding and treat anything under 25% as a product failure you own, not a customer failure.</p>
+    </div>
+    <div>
+      <span class="rl hi">Risk &middot; very likely</span>
+      <h3>The network dies at 23:00</h3>
+      <p>340 phones, one cell, one hall. <b>Fix:</b> offline-first from day one. Compress on device to ~1.5MB, queue in IndexedDB, upload with backoff, survive tab kills, and show honest state &mdash; <span class="he">3 &#1508;&#1512;&#1497;&#1497;&#1502;&#1497;&#1501; &#1502;&#1502;&#1514;&#1497;&#1504;&#1497;&#1501; &#1500;&#1513;&#1500;&#1497;&#1495;&#1492;</span>. The shot must be captured and counted instantly regardless of the network; delivery is a background problem.</p>
+    </div>
+    <div>
+      <span class="rl">Risk &middot; likely</span>
+      <h3>Web camera photos look worse</h3>
+      <p><span class="mono">getUserMedia</span> gives less than the native camera app. <b>Fix:</b> accept it and own it &mdash; imperfection is the pitch, and the alternative (a native camera picker) reintroduces previews, retakes and camera-roll leakage. Recover quality where it's free: request the highest resolution the device offers, force flash where supported, and make the style do real work in low light.</p>
+    </div>
+    <div>
+      <span class="rl">Risk &middot; likely</span>
+      <h3>It reads as tacky</h3>
+      <p>"An app that makes guests stare at phones at a wedding" is a real objection from parents, rabbis and photographers. <b>Fix:</b> Ceremony Mode, no leaderboard by default, no comments, and a shot limit that structurally reduces phone time. The limit is the answer to the objection &mdash; argue it, don't hide from it.</p>
+    </div>
+    <div>
+      <span class="rl">Risk &middot; possible</span>
+      <h3>Something bad on the projector</h3>
+      <p>One explicit or cruel photo on a three-metre screen ends the relationship and the referral. <b>Fix:</b> automatic screening, a 90-second hold buffer, Best Man Mode, one-tap kill, and a physical rule &mdash; the screen is never in direct view of the chuppah.</p>
+    </div>
+    <div>
+      <span class="rl">Risk &middot; possible</span>
+      <h3>The couple is disappointed the next morning</h3>
+      <p>1,800 blurry dark photos is not automatically a gift. <b>Fix:</b> the reveal must be <em>edited</em>. Never open on the full grid. Curation &mdash; awards, chapters, the single best frame, the voices &mdash; is what turns a pile of files into a memory, and it's the whole reason the AI recap is worth building in wave 1.</p>
+    </div>
+    <div>
+      <span class="rl">Risk &middot; structural</span>
+      <h3>Seasonality and one-shot customers</h3>
+      <p>Israeli weddings cluster hard, and every customer buys exactly once. <b>Fix:</b> supplier channel for baseline volume, the guest-to-couple loop for compounding, print products for post-event revenue, and eventual expansion to bar mitzvahs and birthdays &mdash; which conveniently fill the winter.</p>
+    </div>
+    <div>
+      <span class="rl">Risk &middot; structural</span>
+      <h3>A funded competitor copies the mechanic</h3>
+      <p>The shot limit is one afternoon of work to clone. <b>Fix:</b> the moat isn't the feature, it's the <em>combination</em> plus the things that don't live in the codebase &mdash; the print kit, the supplier relationships, the Hebrew challenge writing, the reveal direction, the object on the table. And note that the incumbents can't adopt a shot limit without contradicting their own marketing.</p>
+    </div>
+  </div>
+</section>
+
+<section id="s16">
+  <div class="fhead"><span class="fnum">16</span><h2>Things that weren't in the brief</h2><span class="tag">Additions</span></div>
+
+  <div class="grid g2">
+    <div class="card hot">
+      <span class="kicker">The most valuable one</span>
+      <h3>Ceremony Mode</h3>
+      <p>The camera locks during the chuppah. Full screen, no viewfinder, one line: <span class="he">&#1513;&#1497;&#1502;&#1493; &#1488;&#1514; &#1492;&#1496;&#1500;&#1508;&#1493;&#1504;&#1497;&#1501;. &#1494;&#1492; &#1492;&#1512;&#1490;&#1506; &#1513;&#1500;&#1492;&#1501;.</span> It unlocks automatically when the ceremony ends. This inverts the product's biggest objection &mdash; instead of encouraging phones it <em>manages</em> them &mdash; and it's the single feature that turns photographers, venues and mothers-in-law into advocates. One timer, one screen state.</p>
+    </div>
+    <div class="card hot">
+      <span class="kicker">Turns rival into channel</span>
+      <h3>The photographer's frame</h3>
+      <p>A pro upload link. At 01:00 the photographer drops twenty sneak-peeks into the Darkroom and they land while the party is still going. The couple gets professional images the same night, the photographer gets a delivery channel and credit on the projector, and you get a supplier who sells you.</p>
+    </div>
+    <div class="card">
+      <span class="kicker">Emotional</span>
+      <h3>The couple's own roll</h3>
+      <p>Give the couple fifteen exposures too. They'll shoot four, all at moments nobody else could reach, and it will be the section of the album they open first. Present it separately: <span class="he">&#1492;&#1512;&#1493;&#1500; &#1513;&#1500;&#1499;&#1501;</span>.</p>
+    </div>
+    <div class="card">
+      <span class="kicker">Content</span>
+      <h3>The roll opens early</h3>
+      <p>Two hours before the ceremony, for the wedding party. Getting ready, the parents arriving, the last nervous minutes. Some of the best photographs of any wedding, a window most photographers bill extra for, and it solves the cold-start problem for free.</p>
+    </div>
+    <div class="card">
+      <span class="kicker">Retention</span>
+      <h3>The anniversary capsule</h3>
+      <p>Hold back a set of photos and voice notes at the reveal. Unlock them one year later. A second emotional peak, a reason the archive is worth paying for, and a message you get to send a couple on their first anniversary.</p>
+    </div>
+    <div class="card">
+      <span class="kicker">Reach</span>
+      <h3>For the people who couldn't come</h3>
+      <p>A link the couple sends to the fifty guests who weren't there. Grandparents abroad, a friend with a newborn. Emotionally strong, and it puts the product in front of people who didn't attend at zero cost.</p>
+    </div>
+    <div class="card">
+      <span class="kicker">Placement</span>
+      <h3>The guestbook lives at the end of the roll</h3>
+      <p>Don't build a separate guestbook section nobody visits. Put the prompt at the exact moment the last frame is spent &mdash; the most sentimental point of the guest's entire evening. Conversion will be several times higher than any menu item.</p>
+    </div>
+    <div class="card">
+      <span class="kicker">Positioning</span>
+      <h3>The no-comments rule, stated out loud</h3>
+      <p>Make the absence of comments a public product principle. "Reactions only. Nobody gets to write anything under a photo at your wedding." It's a differentiator, it's a trust signal, and it costs nothing.</p>
+    </div>
+    <div class="card">
+      <span class="kicker">Craft</span>
+      <h3>Sound design as a feature</h3>
+      <p>The shutter, the film advance, the wind at the end of the roll, the soft tone when something develops. Four sound files decide whether the camera feels like a toy or an object. Budget real time for them, and let guests mute in one tap.</p>
+    </div>
+    <div class="card">
+      <span class="kicker">Local</span>
+      <h3>Built for Israeli weddings specifically</h3>
+      <p>RTL throughout, not retrofitted. 400-guest scale. Challenges written in Hebrew by someone who's been to one. &#8362; pricing anchored on the magnet photographer. Tuesday and Thursday nights, ceremonies at 20:30, dancing until 02:00. This is a category where being obviously local beats being obviously international.</p>
+    </div>
+  </div>
+</section>
+
+<section id="app">
+  <div class="fhead"><span class="fnum">A</span><h2>What this implies technically</h2><span class="tag">Appendix</span></div>
+  <p class="lead">Not a build plan &mdash; just the shape the design above forces, so the next conversation starts from something concrete. Stack matches your other projects: Next.js 16 App Router, Prisma and Postgres, S3, Tailwind.</p>
+
+  <h4>The data model, minimally</h4>
+<pre><b>Wedding</b>        names, date, slug, tier, style, cameraMode, exposures,
+                revealAt, ceremonyStart/End, dinnerAt, dancingAt,
+                moderationMode, screenEnabled, paidAt
+<b>Guest</b>          weddingId, displayName, tableNumber, deviceToken <i>(cookie identity)</i>,
+                contact <i>(nullable, asked after the first shot)</i>,
+                exposuresTotal, exposuresUsed
+<b>Frame</b>          weddingId, guestId, originalKey, width/height, takenAt,
+                <b>developsAt</b> <i>(takenAt + delay - the whole Darkroom mechanic)</i>,
+                visibility <i>(public | secret)</i>, challengeId?, missionId?,
+                moderationState, autoScreenScore
+<b>Reaction</b>       frameId, guestId, kind <i>(loved | funny | iconic | sweet)</i>  <i>[unique pair]</i>
+<b>Challenge</b>      weddingId, packId, textHe/textEn, window <i>(standing | timed)</i>, payout
+<b>Completion</b>     challengeId, guestId, frameId
+<b>Mission</b>        weddingId, prompt, opensAt, closesAt, votingClosesAt, winnerFrameId
+<b>VoiceNote</b>      weddingId, guestId, audioKey, durationMs, transcript?
+<b>Award</b>          weddingId, kind, frameId, guestId, computedAt
+<b>Tag</b>            frameId, guestId  <i>(non-biometric "who is in this")</i>
+
+<i>Style is never stored on the Frame - it is a Wedding property applied at render.</i>
+<i>developsAt is a column, not a job. The feed is a query, not a queue.</i></pre>
+
+  <h4>Route shape</h4>
+<pre><b>/w/[slug]</b>            guest camera            <i>the product</i>
+<b>/w/[slug]/darkroom</b>   the developing feed
+<b>/w/[slug]/quests</b>     challenges and film
+<b>/w/[slug]/revealed</b>   next-day, guest edition
+<b>/screen/[slug]</b>       venue projector         <i>polling, 90s hold buffer</i>
+<b>/studio/...</b>          couple: setup, live, memories
+<b>/mod/[token]</b>         Best Man Mode</pre>
+
+  <h4>Three engineering notes that follow directly from the design</h4>
+  <ul class="clean">
+    <li><strong>Capture and delivery are separate.</strong> The shutter writes to IndexedDB and decrements the counter synchronously; upload is a background worker with retry. A guest must never see a spinner after pressing the button, and must never lose a frame to a dead network.</li>
+    <li><strong>Styles are LUTs, applied twice.</strong> A WebGL or canvas LUT pass at display time for the web, and a server-side bake at export. Same LUT file in both places. This is what makes styles reversible and keeps the originals clean.</li>
+    <li><strong>No realtime infrastructure in v1.</strong> The Darkroom polls; a 25-minute develop delay makes 10-second polling more than adequate. Only live missions need anything faster, and they can poll at 2s for their five-minute window. Don't buy a websocket layer to serve a feature that's deliberately slow.</li>
+  </ul>
+</section>
+
+<footer class="foot">
+  <div class="rebate"><span class="mark">Shotly</span><span class="sprockets"></span><span>PRODUCT DESIGN</span><span>&middot;</span><span>V1</span><span>&middot;</span><span><b>THE ROLL</b></span></div>
+</footer>
+</div>

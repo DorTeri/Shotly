@@ -1,36 +1,75 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Shotly
 
-## Getting Started
+> The photographer captures the wedding. The guests capture everything else.
 
-First, run the development server:
+A mobile web camera that lives on wedding guests' phones. Fifteen shots each, no
+preview, no retakes — photos develop 25 minutes later in a shared Darkroom, and the
+whole wedding is revealed the next morning.
+
+Israel-first: Hebrew guest UI, full RTL, built for 350–500 guest weddings.
+
+## Running it
 
 ```bash
+npm install
+cp .env.example .env
+npm run db:up      # local Postgres in Docker on 5433
+npm run db:migrate
+npm run db:seed    # prints the URLs below
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The seed prints a camera link, a venue screen, a studio token and a second wedding
+that sits mid-ceremony so Ceremony Mode is demoable.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Two environment notes on this machine: the native SWC binary is blocked by an
+Application Control policy, so `dev` and `build` run `--webpack` rather than
+Turbopack; and `DATABASE_URL` uses `127.0.0.1` rather than `localhost`, because on
+Windows `localhost` resolves to `::1` first while Docker publishes IPv4 only.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Where things stand
 
-## Learn More
+**Working end to end** — guest camera with the no-preview shutter, the offline
+upload queue, the Darkroom develop delay, reactions, challenges paying out in film,
+secret frames, voice notes, the contact ask, Ceremony Mode, the guest's own contact
+sheet, the venue projector, and the printable Camera Pass with its MC script.
 
-To learn more about Next.js, take a look at the following resources:
+**Not built yet** — the couple's setup flow and post-wedding studio, the next-day
+reveal sequence, awards, live missions, Best Man Mode moderation, payments, and the
+S3 driver is written but unexercised. `src/lib/screen.ts` is a pass-through: wire a
+real content screener up before running an actual wedding.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## The three decisions everything else follows from
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+1. **Darkroom mode** — `Frame.developsAt` is a column, not a job, so the feed is a
+   plain query. A photo becomes visible ~25 minutes after it is taken, which is what
+   lets no-preview photography and a live social layer coexist.
+2. **Film is the only currency** — challenges and reactions pay out in exposures,
+   never points, and a challenge never costs an extra shot.
+3. **Style is a presentation layer** — originals are never modified. The look is
+   applied at display and baked only at export, so a couple can re-develop their
+   whole wedding in a different camera later.
 
-## Deploy on Vercel
+A fourth, enforced in `src/app/api/media/[...key]/route.ts`: **no preview means no
+preview**, including for the photographer. Fetching your own undeveloped frame by
+its direct URL returns 403. Without that the mechanic would be theatre.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Layout
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```
+prisma/schema.prisma          the data model
+src/lib/night.ts              phases, develop timing, reveal chapters
+src/lib/queue.ts              the IndexedDB outbox — capture and delivery are separate
+src/lib/styles.ts             the six cameras
+src/lib/challenges.ts         the challenge packs, Hebrew as the original
+src/components/guest/         the camera, darkroom, quests, roll
+src/components/screen/        the projector
+src/components/studio/        the printed Camera Pass
+design/                       the product design and the original prototype
+```
+
+## Design
+
+The full product and experience design — including the MVP cut, pricing, risks, and
+where the original brief needed changing — lives in `design/strategy.html`, with a
+clickable prototype in `design/prototype.html`.

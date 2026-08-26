@@ -1,0 +1,1020 @@
+<meta charset="utf-8">
+<title>Shotly Guest Camera</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Assistant:wght@200..800&family=Azeret+Mono:wght@300..700&display=swap">
+
+<style>
+/* ================= page chrome (theme aware) ================= */
+:root{
+  --page:#E9E4DE;
+  --panel:#F4F1ED;
+  --panel-2:#DDD6CE;
+  --pink:#171314;
+  --pink-2:#5A5052;
+  --pink-3:#8A7E7C;
+  --line:#CEC6BE;
+  --red:#C9351F;
+  --red-soft:rgba(201,53,31,.10);
+  --shadow:0 24px 60px -24px rgba(23,19,20,.45);
+  --sprock:#D4CDC5;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --page:#0C0909;
+    --panel:#151011;
+    --panel-2:#1F191A;
+    --pink:#EFE9E3;
+    --pink-2:#B4A8A4;
+    --pink-3:#847876;
+    --line:#282022;
+    --red:#E5402A;
+    --red-soft:rgba(229,64,42,.14);
+    --shadow:0 30px 70px -20px rgba(0,0,0,.85);
+    --sprock:#1E1819;
+  }
+}
+:root[data-theme="dark"]{
+  --page:#0C0909;--panel:#151011;--panel-2:#1F191A;--pink:#EFE9E3;--pink-2:#B4A8A4;
+  --pink-3:#847876;--line:#282022;--red:#E5402A;--red-soft:rgba(229,64,42,.14);
+  --shadow:0 30px 70px -20px rgba(0,0,0,.85);--sprock:#1E1819;
+}
+
+/* ================= in-device palette (always dark: it is a camera at night) ======= */
+:root{
+  --d-bg:#0B0808;
+  --d-surf:#171111;
+  --d-surf2:#211919;
+  --d-ink:#F3EDE7;
+  --d-ink2:#A99C98;
+  --d-ink3:#6E6360;
+  --d-line:#2B2222;
+  --d-red:#FF4A2E;
+  --d-amber:#FFC24D;
+  --d-green:#57C08A;
+}
+
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{
+  background:var(--page);color:var(--pink);
+  font-family:"Assistant",system-ui,-apple-system,"Segoe UI",sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+:focus-visible{outline:2px solid var(--red);outline-offset:2px}
+.mono{font-family:"Azeret Mono",ui-monospace,monospace;font-variant-numeric:tabular-nums}
+
+/* ================= layout ================= */
+.app{display:grid;grid-template-columns:258px 1fr;min-height:100vh}
+.rail{
+  border-right:1px solid var(--line);background:var(--panel);
+  padding:26px 20px 60px;position:sticky;top:0;height:100vh;overflow-y:auto;
+}
+.brand{display:flex;flex-direction:column;gap:9px;margin-bottom:28px}
+.brand .wm{font-family:"Archivo",sans-serif;font-weight:900;font-stretch:118%;font-size:15px;letter-spacing:.32em;text-transform:uppercase;color:var(--red)}
+.brand .tl{font-size:12px;color:var(--pink-3);line-height:1.4}
+.sprockets{height:8px;background-image:repeating-linear-gradient(to right,var(--sprock) 0 8px,transparent 8px 15px);border-radius:1px}
+
+.navgrp{margin-bottom:22px}
+.navgrp h4{
+  font-family:"Azeret Mono",monospace;font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--pink-3);margin:0 0 9px;font-weight:600;
+}
+.navbtn{
+  display:flex;align-items:center;gap:9px;width:100%;text-align:left;
+  padding:8px 10px;border-radius:4px;font-size:14px;color:var(--pink-2);line-height:1.25;
+  transition:background .12s,color .12s;
+}
+.navbtn:hover{background:var(--panel-2);color:var(--pink)}
+.navbtn[aria-current="true"]{background:var(--red-soft);color:var(--red);font-weight:700}
+.navbtn .n{font-family:"Azeret Mono",monospace;font-size:10px;opacity:.55;flex:none;width:16px}
+
+.stage{
+  padding:40px 32px 80px;display:flex;flex-direction:column;align-items:center;gap:22px;
+  background:
+    radial-gradient(1000px 620px at 50% -10%,var(--red-soft),transparent 70%),
+    var(--page);
+}
+.shead{max-width:640px;text-align:center;display:flex;flex-direction:column;gap:8px}
+.shead h1{font-family:"Archivo",sans-serif;font-weight:800;font-stretch:106%;font-size:26px;letter-spacing:-.02em;margin:0;text-wrap:balance}
+.shead p{margin:0;color:var(--pink-2);font-size:15px;line-height:1.5;text-wrap:balance}
+.shead .meta{font-family:"Azeret Mono",monospace;font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--red)}
+
+.devices{display:flex;justify-content:center;width:100%}
+.device{display:none}
+.device.on{display:flex;justify-content:center;width:100%;min-width:0}
+
+/* ---------- phone ---------- */
+.phone{
+  width:390px;height:844px;border-radius:52px;background:#000;
+  padding:11px;box-shadow:var(--shadow),0 0 0 1px rgba(255,255,255,.06);
+  position:relative;flex:none;
+}
+.viewport{
+  position:relative;width:100%;height:100%;border-radius:42px;overflow:hidden;
+  background:var(--d-bg);color:var(--d-ink);
+}
+.island{
+  position:absolute;top:9px;left:50%;transform:translateX(-50%);
+  width:112px;height:29px;background:#000;border-radius:16px;z-index:60;
+}
+.statusbar{
+  position:absolute;top:0;left:0;right:0;height:50px;z-index:55;
+  display:flex;align-items:center;justify-content:space-between;padding:14px 26px 0;
+  font-family:"Azeret Mono",monospace;font-size:12px;color:#fff;pointer-events:none;
+  text-shadow:0 1px 3px rgba(0,0,0,.6);
+}
+.statusbar .r{display:flex;gap:5px;align-items:center;font-size:11px;letter-spacing:.04em}
+
+.screen{
+  position:absolute;inset:0;display:none;flex-direction:column;
+  overflow:hidden;
+}
+.screen.on{display:flex}
+.scroll{flex:1;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+.scroll::-webkit-scrollbar{width:0}
+.rtl{direction:rtl;text-align:right}
+
+/* ---------- wide (venue) ---------- */
+.tv{
+  width:min(980px,100%);aspect-ratio:16/9;border-radius:8px;overflow:hidden;
+  background:#080606;box-shadow:var(--shadow);position:relative;color:#F3EDE7;flex:none;
+}
+
+/* ---------- pass card ---------- */
+.passwrap{display:flex;gap:26px;flex-wrap:wrap;justify-content:center;align-items:flex-start}
+.pass{
+  width:340px;background:#12100E;border-radius:6px;overflow:hidden;color:#F5EFE7;
+  box-shadow:var(--shadow);position:relative;flex:none;
+}
+
+/* ================= shared in-device components ================= */
+.pad{padding:0 22px}
+.eyebrow{
+  font-family:"Azeret Mono",monospace;font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--d-ink3);
+}
+.h-xl{font-family:"Archivo",sans-serif;font-weight:800;font-stretch:106%;font-size:32px;line-height:1.06;letter-spacing:-.02em;margin:0;text-wrap:balance}
+.h-l{font-family:"Archivo",sans-serif;font-weight:800;font-size:22px;line-height:1.15;letter-spacing:-.015em;margin:0}
+.h-m{font-family:"Archivo",sans-serif;font-weight:700;font-size:16px;margin:0;letter-spacing:-.01em}
+.body{font-size:15px;line-height:1.5;color:var(--d-ink2);margin:0}
+.small{font-size:13px;line-height:1.45;color:var(--d-ink3);margin:0}
+
+.btn{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  min-height:52px;border-radius:14px;background:var(--d-red);color:#fff;
+  font-weight:700;font-size:16px;width:100%;
+  box-shadow:0 1px 0 rgba(255,255,255,.22) inset,0 10px 24px -10px rgba(255,74,46,.8);
+  transition:transform .1s;
+}
+.btn:active{transform:scale(.98)}
+.btn.ghost{background:rgba(255,255,255,.07);color:var(--d-ink);box-shadow:0 0 0 1px var(--d-line) inset}
+.btn.quiet{background:none;color:var(--d-ink3);min-height:44px;font-weight:600;font-size:14px;box-shadow:none}
+
+.counter{
+  display:inline-flex;align-items:baseline;gap:2px;font-family:"Azeret Mono",monospace;
+  font-variant-numeric:tabular-nums;font-weight:600;
+}
+.counter .big{font-size:26px;color:var(--d-amber);letter-spacing:-.03em}
+.counter .sm{font-size:13px;color:var(--d-ink3)}
+
+.chip{
+  display:inline-flex;align-items:center;gap:6px;padding:6px 11px;border-radius:999px;
+  background:rgba(255,255,255,.07);font-size:12.5px;color:var(--d-ink2);white-space:nowrap;
+}
+.chip.red{background:rgba(255,74,46,.16);color:#FF7357}
+.chip.amber{background:rgba(255,194,77,.15);color:var(--d-amber)}
+.chip.green{background:rgba(87,192,138,.15);color:var(--d-green)}
+
+/* ---------- tab bar ---------- */
+.tabs{
+  flex:none;height:78px;display:grid;grid-template-columns:repeat(4,1fr);
+  background:rgba(10,7,7,.88);backdrop-filter:blur(20px);
+  border-top:1px solid var(--d-line);padding-bottom:16px;
+}
+.tab{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:var(--d-ink3);font-size:10.5px;font-weight:600}
+.tab svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.tab[aria-current="true"]{color:var(--d-red)}
+
+/* ---------- photo tiles ---------- */
+.tile{position:relative;border-radius:5px;overflow:hidden;background:#100C0C;display:block;width:100%}
+.tile canvas{display:block;width:100%;height:100%;object-fit:cover}
+.tile .by{
+  position:absolute;bottom:0;left:0;right:0;padding:16px 9px 7px;font-size:11px;color:#fff;
+  background:linear-gradient(transparent,rgba(0,0,0,.75));text-shadow:0 1px 2px rgba(0,0,0,.5);
+}
+.tile .lock{position:absolute;top:7px;left:7px;font-size:12px;background:rgba(0,0,0,.55);border-radius:4px;padding:2px 6px}
+
+/* developing tile */
+.dev{
+  position:relative;border-radius:5px;overflow:hidden;background:#141010;
+  display:flex;align-items:center;justify-content:center;flex-direction:column;gap:5px;
+  border:1px solid var(--d-line);
+}
+.dev::after{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(115deg,transparent 30%,rgba(255,74,46,.13) 50%,transparent 70%);
+  background-size:280% 100%;animation:sweep 3.4s linear infinite;
+}
+@keyframes sweep{from{background-position:180% 0}to{background-position:-80% 0}}
+@media(prefers-reduced-motion:reduce){.dev::after{animation:none}}
+.dev .t{font-family:"Azeret Mono",monospace;font-size:13px;color:var(--d-amber);position:relative;z-index:2}
+.dev .l{font-size:10px;color:var(--d-ink3);position:relative;z-index:2}
+
+/* reactions */
+.reacts{display:flex;gap:6px;padding:8px 2px 0}
+.react{
+  display:flex;align-items:center;gap:4px;padding:6px 10px;border-radius:999px;
+  background:rgba(255,255,255,.06);font-size:13px;color:var(--d-ink2);min-height:32px;
+  transition:background .12s,transform .1s;
+}
+.react:active{transform:scale(.94)}
+.react[aria-pressed="true"]{background:rgba(255,74,46,.2);color:#FF8467}
+.react .c{font-family:"Azeret Mono",monospace;font-size:11px}
+
+/* flash + toast */
+.flash{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none;z-index:70}
+.flash.go{animation:fl .34s ease-out}
+@keyframes fl{0%{opacity:.92}100%{opacity:0}}
+.toast{
+  position:absolute;left:50%;bottom:150px;transform:translateX(-50%) translateY(10px);
+  background:rgba(12,9,9,.92);backdrop-filter:blur(12px);border:1px solid var(--d-line);
+  padding:11px 18px;border-radius:11px;font-size:14px;color:var(--d-ink);
+  opacity:0;pointer-events:none;transition:opacity .22s,transform .22s;z-index:65;white-space:nowrap;
+}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast b{color:var(--d-amber);font-family:"Azeret Mono",monospace}
+
+.note{
+  margin-top:6px;font-size:12.5px;color:var(--pink-3);text-align:center;max-width:420px;line-height:1.5;
+}
+
+@media(max-width:1020px){
+  .app{grid-template-columns:1fr}
+  .rail{position:static;height:auto;border-right:0;border-bottom:1px solid var(--line)}
+  .phone{transform:scale(.92);transform-origin:top center;margin-bottom:-60px}
+}
+</style>
+
+<div class="app">
+
+<aside class="rail">
+  <div class="brand">
+    <span class="wm">Shotly</span>
+    <div class="sprockets"></div>
+    <span class="tl">Interactive prototype &middot; guest screens in Hebrew&nbsp;/&nbsp;RTL as shipped</span>
+  </div>
+  <nav id="nav"></nav>
+</aside>
+
+<main class="stage">
+  <div class="shead">
+    <span class="meta" id="sMeta">GUEST</span>
+    <h1 id="sTitle">The Camera Pass</h1>
+    <p id="sNote">What a guest sees before they see anything else.</p>
+  </div>
+
+  <div class="devices">
+    <!-- ===================== PRINTED PASS ===================== -->
+    <div class="device" id="dev-pass">
+      <div class="passwrap">
+        <div class="pass">
+          <div style="padding:26px 24px 0;display:flex;justify-content:space-between;align-items:center">
+            <span style="font-family:'Archivo';font-weight:900;font-stretch:118%;font-size:12px;letter-spacing:.3em;color:#FF4A2E">SHOTLY</span>
+            <span class="mono" style="font-size:9px;letter-spacing:.2em;color:#7B6F6A">ISO 400 &middot; 36 EXP</span>
+          </div>
+          <div style="padding:22px 24px 0" class="rtl">
+            <div style="font-family:'Archivo';font-weight:900;font-size:33px;line-height:1.04;letter-spacing:-.02em">יש לך 15 צילומים.<br><span style="color:#FF4A2E">אל תבזבז אותם.</span></div>
+            <div style="margin-top:12px;font-size:14px;color:#A2948E;line-height:1.5">תצלם את מה שהצלם לא יתפוס.<br>הכל מתפתח מחר בבוקר ב־10:00.</div>
+          </div>
+          <div style="padding:22px 24px 0;display:flex;justify-content:center">
+            <div id="qr" style="width:150px;height:150px;background:#F5EFE7;border-radius:4px;padding:9px"></div>
+          </div>
+          <div class="rtl" style="padding:14px 24px 0;text-align:center;font-size:13px;color:#A2948E">מאיה &amp; דניאל &middot; 14.5.26</div>
+          <div style="margin-top:20px;padding:9px 24px;border-top:1px dashed #2B2422;display:flex;justify-content:space-between;align-items:center">
+            <span class="mono" style="font-size:8.5px;letter-spacing:.22em;color:#FF4A2E">SHOTLY 400 &middot; MAYA &amp; DANIEL &middot; T07</span>
+            <span style="height:7px;width:60px;background-image:repeating-linear-gradient(to right,#2B2422 0 6px,transparent 6px 12px)"></span>
+          </div>
+        </div>
+        <div style="max-width:250px;padding-top:10px">
+          <p class="note" style="text-align:left;margin:0 0 14px">The most-seen object the brand owns: 350 people, eye level, five hours. It never explains the product &mdash; it dares you.</p>
+          <p class="note" style="text-align:left;margin:0 0 14px">The bottom strip is the <b>edge rebate</b>, the film marking that becomes the logo. It reappears on every exported photo and share card.</p>
+          <p class="note" style="text-align:left;margin:0">The <code class="mono">T07</code> is the table number, baked into the QR &mdash; so the guest never has to pick one.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===================== PHONE ===================== -->
+    <div class="device" id="dev-phone">
+      <div class="phone">
+        <div class="viewport" id="vp">
+          <div class="island"></div>
+          <div class="statusbar"><span class="mono">23:41</span><span class="r mono">5G &nbsp;&#9679;&#9679;&#9679; &nbsp;68%</span></div>
+          <div class="flash" id="flash"></div>
+          <div class="toast" id="toast"></div>
+          <div id="screens"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===================== VENUE ===================== -->
+    <div class="device" id="dev-tv">
+      <div class="tv" id="tv"></div>
+    </div>
+  </div>
+
+  <p class="note" id="sHint"></p>
+</main>
+</div>
+<style>
+/* ---- style LUT previews (the "wedding camera" looks) ---- */
+.st{position:relative;overflow:hidden}
+.st canvas{transition:filter .3s}
+.st::after{content:"";position:absolute;inset:0;pointer-events:none;mix-blend-mode:overlay;opacity:.55}
+.st-disposable canvas{filter:contrast(1.2) saturate(1.3) brightness(1.04)}
+.st-disposable::after{background:linear-gradient(#ff9a3c,#ff5a2e)}
+.st-kodak canvas{filter:sepia(.2) saturate(1.35) contrast(1.05)}
+.st-kodak::after{background:linear-gradient(#ffce7a,#ff9a4d)}
+.st-bw canvas{filter:grayscale(1) contrast(1.25) brightness(1.02)}
+.st-bw::after{background:transparent}
+.st-polaroid canvas{filter:contrast(.9) saturate(.85) brightness(1.12)}
+.st-polaroid::after{background:linear-gradient(#fff2d8,#e9d9c2);opacity:.4}
+.st-tlv canvas{filter:saturate(1.5) contrast(1.15) hue-rotate(-10deg)}
+.st-tlv::after{background:linear-gradient(#ff2e88,#2ea8ff);opacity:.32}
+.st-cinema canvas{filter:contrast(1.12) saturate(.82) brightness(.98)}
+.st-cinema::after{background:linear-gradient(#2b4a6b,#6b3a2b);opacity:.42}
+
+.field{
+  width:100%;min-height:54px;border-radius:13px;background:rgba(255,255,255,.06);
+  border:1px solid var(--d-line);color:var(--d-ink);font-size:17px;padding:0 16px;
+  font-family:inherit;
+}
+.field::placeholder{color:var(--d-ink3)}
+.tablegrid{display:grid;grid-template-columns:repeat(5,1fr);gap:7px}
+.tbl{
+  aspect-ratio:1;border-radius:10px;background:rgba(255,255,255,.05);
+  display:flex;align-items:center;justify-content:center;font-family:"Azeret Mono",monospace;
+  font-size:14px;color:var(--d-ink2);border:1px solid transparent;
+}
+.tbl[aria-pressed="true"]{background:rgba(255,74,46,.18);color:#FF7357;border-color:#FF4A2E;font-weight:600}
+
+.shutter{
+  width:76px;height:76px;border-radius:50%;background:#fff;
+  box-shadow:0 0 0 4px rgba(255,255,255,.22),0 0 0 1px rgba(0,0,0,.4) inset;
+  transition:transform .09s;flex:none;
+}
+.shutter:active{transform:scale(.9)}
+.shutter[disabled]{opacity:.3}
+.qrow{display:flex;flex-direction:column;gap:9px}
+.quest{
+  display:flex;gap:12px;align-items:flex-start;padding:14px;border-radius:12px;
+  background:var(--d-surf);border:1px solid var(--d-line);
+}
+.quest.done{opacity:.5}
+.quest .ic{width:34px;height:34px;border-radius:9px;background:rgba(255,74,46,.14);display:flex;align-items:center;justify-content:center;font-size:16px;flex:none}
+.quest.done .ic{background:rgba(87,192,138,.16)}
+.rowbtn{display:flex;align-items:center;justify-content:space-between;width:100%;padding:15px 0;border-bottom:1px solid var(--d-line)}
+.statline{display:flex;align-items:baseline;justify-content:space-between;padding:11px 0;border-bottom:1px solid var(--d-line)}
+.statline .v{font-family:"Azeret Mono",monospace;font-size:21px;font-weight:600;color:var(--d-amber)}
+.sheet{display:flex;flex-direction:column;gap:14px}
+.contact-strip{display:grid;grid-template-columns:repeat(5,1fr);gap:3px;background:#0E0A0A;padding:5px;border-radius:4px}
+.awardcard{
+  border-radius:8px;overflow:hidden;background:#100C0C;border:1px solid var(--d-line);
+}
+.modecard{
+  padding:16px;border-radius:13px;background:var(--d-surf);border:1px solid var(--d-line);text-align:left;width:100%;
+}
+.modecard[aria-pressed="true"]{border-color:var(--d-red);background:rgba(255,74,46,.1)}
+.stylecard{border-radius:9px;overflow:hidden;background:var(--d-surf);border:1px solid var(--d-line);text-align:left;padding:0;width:100%}
+.stylecard[aria-pressed="true"]{border-color:var(--d-red);box-shadow:0 0 0 1px var(--d-red)}
+</style>
+
+<script>
+(function(){
+"use strict";
+var reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/* ---------------- seeded noise painter ---------------- */
+function rng(seed){var s=seed*9301+49297;return function(){s=(s*9301+49297)%233280;return s/233280;};}
+var PAL=[[255,150,80],[255,96,60],[255,205,120],[200,120,255],[120,180,255],[255,240,210]];
+function paint(cv,seed,w,h){
+  w=w||300;h=h||300;
+  var d=Math.min(devicePixelRatio||1,2);
+  cv.width=w*d;cv.height=h*d;
+  var c=cv.getContext("2d");c.scale(d,d);
+  var r=rng(seed);
+  // ground
+  var g=c.createLinearGradient(0,0,w,h);
+  g.addColorStop(0,"rgb("+(24+r()*26|0)+","+(14+r()*14|0)+","+(12+r()*12|0)+")");
+  g.addColorStop(1,"rgb("+(46+r()*40|0)+","+(24+r()*20|0)+","+(18+r()*16|0)+")");
+  c.fillStyle=g;c.fillRect(0,0,w,h);
+  // subject mass (a body / a face, out of focus)
+  var n=2+(r()*2|0);
+  for(var i=0;i<n;i++){
+    var cx=w*(.2+r()*.6),cy=h*(.35+r()*.5),rr=h*(.25+r()*.3);
+    var rg=c.createRadialGradient(cx,cy,0,cx,cy,rr);
+    var p=PAL[(r()*PAL.length)|0];
+    rg.addColorStop(0,"rgba("+p[0]+","+p[1]+","+p[2]+",.5)");
+    rg.addColorStop(1,"rgba("+p[0]+","+p[1]+","+p[2]+",0)");
+    c.fillStyle=rg;c.beginPath();c.arc(cx,cy,rr,0,7);c.fill();
+  }
+  // bokeh
+  var bk=10+(r()*12|0);
+  for(var j=0;j<bk;j++){
+    var bx=r()*w,by=r()*h*.75,br=3+r()*17;
+    var p2=PAL[(r()*PAL.length)|0];
+    var bg=c.createRadialGradient(bx,by,0,bx,by,br);
+    bg.addColorStop(0,"rgba("+p2[0]+","+p2[1]+","+p2[2]+",."+(4+(r()*4|0))+")");
+    bg.addColorStop(.75,"rgba("+p2[0]+","+p2[1]+","+p2[2]+",.14)");
+    bg.addColorStop(1,"rgba("+p2[0]+","+p2[1]+","+p2[2]+",0)");
+    c.fillStyle=bg;c.beginPath();c.arc(bx,by,br,0,7);c.fill();
+  }
+  // vignette
+  var v=c.createRadialGradient(w/2,h/2,h*.2,w/2,h/2,h*.78);
+  v.addColorStop(0,"rgba(0,0,0,0)");v.addColorStop(1,"rgba(0,0,0,.62)");
+  c.fillStyle=v;c.fillRect(0,0,w,h);
+  // grain
+  var im=c.getImageData(0,0,w*d,h*d),px=im.data;
+  for(var k=0;k<px.length;k+=4){
+    var nz=(Math.random()-.5)*30;
+    px[k]+=nz;px[k+1]+=nz;px[k+2]+=nz;
+  }
+  c.putImageData(im,0,0);
+}
+function tile(seed,ratio,by,lock,cls){
+  return '<div class="tile st '+(cls||"st-disposable")+'" style="aspect-ratio:'+(ratio||"1")+'">'+
+    '<canvas data-seed="'+seed+'"></canvas>'+
+    (lock?'<span class="lock">&#128274;</span>':'')+
+    (by?'<span class="by">'+by+'</span>':'')+'</div>';
+}
+
+/* ---------------- fake QR ---------------- */
+function drawQR(el){
+  var n=25,cv=document.createElement("canvas"),s=132;
+  cv.width=cv.height=s*2;cv.style.width=cv.style.height="100%";
+  var c=cv.getContext("2d");c.scale(2,2);
+  c.fillStyle="#F5EFE7";c.fillRect(0,0,s,s);
+  c.fillStyle="#12100E";
+  var u=s/n,r=rng(7);
+  function fin(x,y){
+    c.fillRect(x*u,y*u,7*u,7*u);
+    c.fillStyle="#F5EFE7";c.fillRect((x+1)*u,(y+1)*u,5*u,5*u);
+    c.fillStyle="#12100E";c.fillRect((x+2)*u,(y+2)*u,3*u,3*u);
+  }
+  for(var y=0;y<n;y++)for(var x=0;x<n;x++){
+    var inFin=(x<8&&y<8)||(x>n-9&&y<8)||(x<8&&y>n-9);
+    if(!inFin&&r()>.52)c.fillRect(x*u,y*u,u,u);
+  }
+  fin(0,0);fin(n-7,0);fin(0,n-7);
+  el.appendChild(cv);
+}
+
+/* ---------------- state ---------------- */
+var S={total:15,used:7,secret:false,table:7,reacted:{}};
+function left(){return S.total-S.used;}
+
+/* ---------------- shared bits ---------------- */
+function topbar(extra){
+  return '<div style="flex:none;padding:58px 22px 12px;display:flex;align-items:center;justify-content:space-between">'+
+    '<div><div class="eyebrow">מאיה &amp; דניאל</div>'+
+    '<div class="counter" style="margin-top:2px"><span class="big" data-left>'+left()+'</span><span class="sm">/'+S.total+' פריימים</span></div></div>'+
+    (extra||'')+'</div>';
+}
+function tabs(cur){
+  var t=[["camera","מצלמה",'<path d="M3 8.5A2.5 2.5 0 0 1 5.5 6h1.7l1.3-2h6l1.3 2h1.7A2.5 2.5 0 0 1 20 8.5v8A2.5 2.5 0 0 1 17.5 19h-11A2.5 2.5 0 0 1 4 16.5z"/><circle cx="11.5" cy="12" r="3.2"/>'],
+    ["darkroom","חדר חושך",'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 15l4.5-4 4 3.5L15 11l6 5.5"/>'],
+    ["quests","משימות",'<path d="M4 5h16v14H4z"/><path d="M8 10h8M8 14h5"/>'],
+    ["myroll","הרול שלי",'<rect x="3" y="6" width="18" height="12" rx="1.5"/><path d="M7 6v12M17 6v12"/>']];
+  return '<div class="tabs">'+t.map(function(x){
+    return '<button class="tab" data-go="'+x[0]+'"'+(cur===x[0]?' aria-current="true"':'')+'><svg viewBox="0 0 24 24">'+x[2]+'</svg><span>'+x[1]+'</span></button>';
+  }).join("")+'</div>';
+}
+
+/* ---------------- screens ---------------- */
+var SC={};
+
+SC.enter='<div class="screen rtl" dir="rtl" id="sc-enter">'+
+ '<div style="position:absolute;inset:0"><canvas data-seed="41" style="width:100%;height:100%;filter:contrast(1.15) saturate(1.25)"></canvas>'+
+ '<div style="position:absolute;inset:0;background:linear-gradient(rgba(11,8,8,.45),rgba(11,8,8,.5) 40%,rgba(11,8,8,.96))"></div></div>'+
+ '<div class="scroll" style="position:relative;display:flex;flex-direction:column;justify-content:flex-end;padding:0 22px 40px">'+
+   '<div class="eyebrow" style="color:#FF7357">מאיה &amp; דניאל &middot; 14.5.26</div>'+
+   '<h1 class="h-xl" style="margin:12px 0 0">יש לך 15 צילומים.<br>אל תבזבז אותם.</h1>'+
+   '<p class="body" style="margin-top:14px">בלי לראות אותן. בלי לצלם שוב. הכל מתפתח מחר ב־10:00 בבוקר.</p>'+
+   '<div style="display:flex;gap:7px;margin:20px 0 26px;flex-wrap:wrap">'+
+     '<span class="chip amber">🎞️ 15 פריימים</span><span class="chip">🚫 בלי תצוגה מקדימה</span><span class="chip">🌅 מתפתח מחר</span></div>'+
+   '<button class="btn" data-go="onboard">קחו לי את המצלמה</button>'+
+   '<p class="small" style="text-align:center;margin-top:14px">בלי הורדה. בלי הרשמה. פשוט תתחילו.</p>'+
+ '</div></div>';
+
+SC.onboard='<div class="screen rtl" dir="rtl" id="sc-onboard"><div class="scroll" style="padding:74px 22px 30px">'+
+ '<div class="eyebrow">שלב 1 מתוך 1</div>'+
+ '<h2 class="h-l" style="margin:10px 0 6px">איך קוראים לך?</h2>'+
+ '<p class="small" style="margin-bottom:18px">זה מה שיופיע מתחת לתמונות שלך.</p>'+
+ '<input class="field" placeholder="נועה" value="נועה" dir="rtl">'+
+ '<div style="height:26px"></div>'+
+ '<h2 class="h-m" style="margin-bottom:4px">באיזה שולחן את?</h2>'+
+ '<p class="small" style="margin-bottom:12px">לא חובה — אבל ככה נבנה לך אלבום של השולחן שלך.</p>'+
+ '<div class="tablegrid" id="tg">'+[1,2,3,4,5,6,7,8,9,10].map(function(i){
+   return '<button class="tbl" data-tbl="'+i+'"'+(i===7?' aria-pressed="true"':'')+'>'+i+'</button>';}).join("")+'</div>'+
+ '<div style="height:28px"></div>'+
+ '<button class="btn" data-go="camera">מתחילים</button>'+
+ '<p class="small" style="text-align:center;margin-top:12px">זהו. זה כל הטופס.</p>'+
+ '</div></div>';
+
+SC.camera='<div class="screen" id="sc-camera">'+
+ '<div style="position:absolute;inset:0"><canvas id="vf" style="width:100%;height:100%"></canvas>'+
+ '<div style="position:absolute;inset:0;background:radial-gradient(120% 80% at 50% 45%,transparent 40%,rgba(0,0,0,.55))"></div></div>'+
+ '<div class="rtl" dir="rtl" style="position:relative;flex:none;padding:58px 22px 0;display:flex;justify-content:space-between;align-items:flex-start">'+
+   '<div><div class="eyebrow" style="color:#EFE3DD">מאיה &amp; דניאל</div>'+
+   '<div class="counter" style="margin-top:1px"><span class="big" data-left>'+left()+'</span><span class="sm">/15</span></div></div>'+
+   '<button class="chip" id="secretBtn" aria-pressed="false">🔓 גלוי לכולם</button>'+
+ '</div>'+
+ '<div style="flex:1"></div>'+
+ '<div class="rtl" dir="rtl" style="position:relative;flex:none;padding:0 22px 14px;text-align:center">'+
+   '<p class="small" id="camHint" style="margin-bottom:14px">לא תראי את התמונה. תסמכי על עצמך.</p>'+
+   '<div style="display:flex;align-items:center;justify-content:space-between">'+
+     '<button class="chip" data-go="quests">משימות · 3</button>'+
+     '<button class="shutter" id="shutter" aria-label="צלם"></button>'+
+     '<button class="chip" data-go="darkroom">מתפתח · 4</button>'+
+   '</div>'+
+ '</div>'+tabs("camera")+'</div>';
+
+SC.contact='<div class="screen rtl" dir="rtl" id="sc-contact"><div class="scroll" style="padding:0 22px;display:flex;flex-direction:column;justify-content:center">'+
+ '<div style="font-size:34px;text-align:center;margin-bottom:6px">🎞️</div>'+
+ '<h2 class="h-l" style="text-align:center">פריים 1 נשמר.</h2>'+
+ '<p class="body" style="text-align:center;margin:10px 0 26px">לאן לשלוח לך את התמונות מחר בבוקר?</p>'+
+ '<input class="field" placeholder="050-000-0000" dir="ltr" style="text-align:center">'+
+ '<div style="height:12px"></div>'+
+ '<button class="btn" data-go="camera">שלחו לי</button>'+
+ '<button class="btn quiet" data-go="camera">לא עכשיו</button>'+
+ '<p class="small" style="text-align:center;margin-top:16px;line-height:1.5">רק בשביל התמונות של החתונה הזאת. שום דבר אחר.</p>'+
+ '</div></div>';
+
+SC.darkroom='<div class="screen rtl" dir="rtl" id="sc-darkroom">'+topbar('<button class="chip red" data-go="mission">משימה חיה 🔴</button>')+
+ '<div class="scroll pad" style="padding-bottom:20px">'+
+   '<div style="display:flex;align-items:baseline;justify-content:space-between;margin:4px 0 10px">'+
+     '<h2 class="h-m">מתפתח עכשיו</h2><span class="small">4 פריימים שלך</span></div>'+
+   '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:24px">'+
+     '<div class="dev" style="aspect-ratio:1"><span class="t" data-tick="742">12:22</span><span class="l">שלך</span></div>'+
+     '<div class="dev" style="aspect-ratio:1"><span class="t" data-tick="1080">18:00</span><span class="l">שלך</span></div>'+
+     '<div class="dev" style="aspect-ratio:1"><span class="t" data-tick="1310">21:50</span><span class="l">שלך</span></div>'+
+     '<div class="dev" style="aspect-ratio:1"><span class="t" data-tick="1495">24:55</span><span class="l">שלך</span></div>'+
+   '</div>'+
+   '<div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:10px">'+
+     '<h2 class="h-m">התפתח</h2><span class="small">312 פריימים הערב</span></div>'+
+   photoFeed()+
+ '</div>'+tabs("darkroom")+'</div>';
+
+function photoFeed(){
+  var items=[
+    {s:12,by:"יובל · שולחן 4",r:{loved:14,funny:3},cls:"st-disposable"},
+    {s:23,by:"נועה · שולחן 7",r:{loved:6,funny:21},cls:"st-kodak"},
+    {s:34,by:"איתי · שולחן 2",r:{loved:31,iconic:9},cls:"st-disposable"},
+    {s:47,by:"שירה · שולחן 9",r:{sweet:18,loved:7},cls:"st-tlv"}
+  ];
+  return items.map(function(it,i){
+    var rk=Object.keys(it.r);
+    return '<div style="margin-bottom:22px">'+
+      tile(it.s,"4/5",it.by,false,it.cls)+
+      '<div class="reacts">'+
+        '<button class="react" data-r="'+i+'-l" aria-pressed="false">❤️<span class="c">'+(it.r.loved||0)+'</span></button>'+
+        '<button class="react" data-r="'+i+'-f" aria-pressed="false">😂<span class="c">'+(it.r.funny||0)+'</span></button>'+
+        '<button class="react" data-r="'+i+'-i" aria-pressed="false">🔥<span class="c">'+(it.r.iconic||0)+'</span></button>'+
+        '<button class="react" data-r="'+i+'-s" aria-pressed="false">🥹<span class="c">'+(it.r.sweet||0)+'</span></button>'+
+      '</div></div>';
+  }).join("");
+}
+
+SC.quests='<div class="screen rtl" dir="rtl" id="sc-quests">'+topbar('')+
+ '<div class="scroll pad" style="padding-bottom:20px">'+
+  '<div class="quest" style="background:rgba(255,194,77,.09);border-color:rgba(255,194,77,.3);margin-bottom:18px">'+
+    '<span class="ic" style="background:rgba(255,194,77,.18)">🎞️</span>'+
+    '<div><h3 class="h-m">כל משימה = עוד 2 פריימים</h3>'+
+    '<p class="small" style="margin-top:3px">המשימה לא עולה לך צילום. היא מחזירה לך יותר ממה שהיא לוקחת.</p></div></div>'+
+  '<h2 class="h-m" style="margin-bottom:10px">עכשיו · עד 00:15</h2>'+
+  '<div class="qrow" style="margin-bottom:24px">'+
+    quest("💃","הריקוד של ההורים","נגמר בעוד 14 דקות","+2",false,true)+
+  '</div>'+
+  '<h2 class="h-m" style="margin-bottom:10px">כל הערב</h2>'+
+  '<div class="qrow">'+
+    quest("🪑","כל השולחן שלך בפריים אחד","","+2",false)+
+    quest("😭","מישהו בוכה","","+2",false)+
+    quest("🤳","סלפי עם מישהו שהכרת הערב","","+2",false)+
+    quest("👗","הכי לבוש/ה בערב","","+2",false)+
+    quest("👀","הזוג — כשהם לא שמים לב","הושלם · יובל צילם ראשון","+2",true)+
+    quest("🕺","מישהו על הכתפיים","הושלם","+2",true)+
+  '</div>'+
+  '<div style="height:16px"></div>'+
+  '<div class="quest" style="border-style:dashed;opacity:.75"><span class="ic">🔍</span>'+
+   '<div><h3 class="h-m">יש עוד 3 כרטיסים מוחבאים באולם</h3>'+
+   '<p class="small" style="margin-top:3px">מאחורי הבר, במרפסת, ואצל הסבתות. כל אחד שווה 3 פריימים.</p></div></div>'+
+ '</div>'+tabs("quests")+'</div>';
+
+function quest(ic,t,sub,pay,done,live){
+  return '<button class="quest'+(done?" done":"")+'" data-quest="'+t+'" style="text-align:right">'+
+    '<span class="ic">'+(done?"✓":ic)+'</span>'+
+    '<div style="flex:1"><h3 class="h-m">'+t+'</h3>'+(sub?'<p class="small" style="margin-top:3px">'+sub+'</p>':'')+'</div>'+
+    '<span class="chip '+(live?"red":"amber")+'" style="flex:none">'+pay+'</span></button>';
+}
+
+SC.mission='<div class="screen rtl" dir="rtl" id="sc-mission" style="background:linear-gradient(#2A0A05,#0B0808)">'+
+ '<div class="scroll" style="padding:70px 22px 30px;display:flex;flex-direction:column;justify-content:center;text-align:center">'+
+  '<div class="eyebrow" style="color:#FF7357;letter-spacing:.3em">משימה חיה</div>'+
+  '<h1 class="h-xl" style="margin:14px 0 0;font-size:36px">הצילום הכי טוב<br>מרחבת הריקודים</h1>'+
+  '<div class="mono" id="misT" style="font-size:58px;font-weight:600;color:#FF4A2E;margin:22px 0 4px;letter-spacing:-.04em">2:48</div>'+
+  '<p class="small" style="margin-bottom:26px">אחר כך כולם מצביעים. המנצח/ת עולה על המסך.</p>'+
+  '<div style="display:flex;gap:7px;justify-content:center;margin-bottom:26px;flex-wrap:wrap">'+
+    '<span class="chip">31 שלחו</span><span class="chip amber">🎞️ +5 למנצח</span></div>'+
+  '<button class="btn" data-go="camera">לצלם עכשיו</button>'+
+  '<button class="btn quiet" data-go="darkroom">לדלג הפעם</button>'+
+ '</div></div>';
+
+SC.ceremony='<div class="screen rtl" dir="rtl" id="sc-ceremony" style="background:#080606">'+
+ '<div class="scroll" style="padding:0 32px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center">'+
+  '<div style="width:70px;height:70px;border-radius:50%;border:1px solid #2B2222;display:flex;align-items:center;justify-content:center;font-size:26px;margin-bottom:24px">🤍</div>'+
+  '<h1 class="h-l" style="font-size:26px;line-height:1.25">שימו את הטלפונים.<br>זה הרגע שלהם.</h1>'+
+  '<p class="body" style="margin-top:16px">המצלמה תיפתח מחדש אוטומטית בסוף החופה.</p>'+
+  '<div class="mono" style="margin-top:26px;font-size:13px;color:#6E6360;letter-spacing:.16em">נפתח בעוד 11:20</div>'+
+  '<p class="small" style="margin-top:40px;max-width:24ch;line-height:1.6">הפריימים שלך שמורים. אף אחד לא לוקח לך כלום.</p>'+
+ '</div></div>';
+
+SC.endroll='<div class="screen rtl" dir="rtl" id="sc-endroll"><div class="scroll" style="padding:70px 22px 30px">'+
+ '<div class="eyebrow">01:24</div>'+
+ '<h1 class="h-xl" style="margin:10px 0 0">זהו.<br>הפילם נגמר.</h1>'+
+ '<p class="body" style="margin:12px 0 22px">15 פריימים. אף אחד מהם לא צולם פעמיים.</p>'+
+ '<div class="contact-strip" style="margin-bottom:8px">'+
+   [61,62,63,64,65,66,67,68,69,70].map(function(s){return tile(s,"1","",false,"st-disposable");}).join("")+
+ '</div>'+
+ '<p class="small" style="text-align:center;margin-bottom:26px">מתפתח. תראי הכל מחר ב־10:00.</p>'+
+ '<div style="padding:20px;border-radius:14px;background:rgba(255,74,46,.1);border:1px solid rgba(255,74,46,.3);text-align:center">'+
+   '<div style="font-size:28px;margin-bottom:8px">🎙️</div>'+
+   '<h2 class="h-m">רוצה להשאיר להם משהו?</h2>'+
+   '<p class="small" style="margin:8px 0 16px">15 שניות. הם ישמעו את זה מחר בבוקר.</p>'+
+   '<button class="btn" data-go="voice">להקליט</button>'+
+ '</div>'+
+ '<button class="btn quiet" data-go="darkroom" style="margin-top:14px">לחדר החושך</button>'+
+ '</div></div>';
+
+SC.voice='<div class="screen rtl" dir="rtl" id="sc-voice"><div class="scroll" style="padding:0 22px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center">'+
+ '<div class="eyebrow">הודעה למאיה ודניאל</div>'+
+ '<div id="wave" style="display:flex;gap:3px;align-items:center;height:78px;margin:26px 0 10px"></div>'+
+ '<div class="mono" style="font-size:30px;font-weight:600;color:#FF4A2E">0:09</div>'+
+ '<p class="small" style="margin:6px 0 30px">עוד 6 שניות</p>'+
+ '<button class="btn" data-go="endroll">סיימתי</button>'+
+ '<button class="btn quiet" data-go="endroll">מחק והתחל מחדש</button>'+
+ '</div></div>';
+
+SC.revealed='<div class="screen rtl" dir="rtl" id="sc-revealed" style="background:linear-gradient(#1A0D08,#0B0808 55%)">'+
+ '<div class="scroll" style="padding:76px 22px 30px">'+
+  '<div style="text-align:center">'+
+   '<div style="font-size:40px">🎞️</div>'+
+   '<h1 class="h-xl" style="margin:14px 0 0;font-size:30px">החתונה של מאיה ודניאל<br>פותחה.</h1>'+
+   '<p class="body" style="margin-top:12px">אתמול בלילה, מ־143 טלפונים שונים.</p></div>'+
+  '<div style="margin:26px 0 22px">'+
+   stat("1,847","פריימים")+stat("143","צלמים")+stat("73","הודעות קוליות")+stat("46","משימות הושלמו")+
+  '</div>'+
+  tile(88,"4/5","הכי אהוב הערב · שירה, שולחן 9",false,"st-disposable")+
+  '<div style="height:22px"></div>'+
+  '<button class="btn" data-go="myroll">לפתוח את החתונה</button>'+
+ '</div></div>';
+
+function stat(v,l){return '<div class="statline"><span class="body">'+l+'</span><span class="v">'+v+'</span></div>';}
+
+SC.myroll='<div class="screen rtl" dir="rtl" id="sc-myroll">'+
+ '<div style="flex:none;padding:58px 22px 12px"><div class="eyebrow">14.5.26</div><h2 class="h-l" style="margin-top:3px">הרול של נועה</h2></div>'+
+ '<div class="scroll pad" style="padding-bottom:20px">'+
+  '<div style="padding:16px;border-radius:13px;background:rgba(255,74,46,.1);border:1px solid rgba(255,74,46,.28);margin-bottom:22px">'+
+   '<h3 class="h-m">מצאנו 32 תמונות שאת מופיעה בהן</h3>'+
+   '<p class="small" style="margin:6px 0 12px">מ־11 אורחים שונים. את לא צילמת אף אחת מהן.</p>'+
+   '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:5px">'+
+     [71,72,73,74].map(function(s){return tile(s,"1","",false,"st-kodak");}).join("")+'</div></div>'+
+  '<div class="awardcard" style="margin-bottom:22px">'+
+   tile(80,"4/3","",false,"st-disposable")+
+   '<div style="padding:14px 16px">'+
+     '<div class="eyebrow" style="color:#FFC24D">😂 הכי מצחיק בערב</div>'+
+     '<h3 class="h-m" style="margin-top:5px">נועה · שולחן 7</h3>'+
+     '<p class="small" style="margin-top:3px">מתוך 1,847 פריימים.</p>'+
+     '<button class="btn ghost" style="margin-top:12px;min-height:44px">שיתוף הכרטיס 📸</button>'+
+   '</div>'+
+   '<div style="padding:8px 16px;border-top:1px dashed #2B2222" class="mono" dir="ltr">'+
+     '<span style="font-size:8.5px;letter-spacing:.2em;color:#FF4A2E">SHOTLY 400 &middot; MAYA &amp; DANIEL &middot; 23</span></div>'+
+  '</div>'+
+  '<h2 class="h-m" style="margin-bottom:10px">15 הפריימים שלך</h2>'+
+  '<div class="contact-strip">'+
+   [61,62,63,64,65,66,67,68,69,70,75,76,77,78,79].map(function(s){return tile(s,"1","",false,"st-disposable");}).join("")+
+  '</div>'+
+  '<div style="height:22px"></div>'+
+  '<div style="padding:16px;border-radius:12px;border:1px dashed #2B2222;text-align:center">'+
+   '<p class="small">מתחתנים? מאיה ודניאל מקבלים זיכוי אם תשתמשו במצלמה שלהם.</p></div>'+
+ '</div>'+tabs("myroll")+'</div>';
+
+/* ---------------- couple (LTR) ---------------- */
+SC.cstyle='<div class="screen" dir="ltr" id="sc-cstyle"><div class="scroll" style="padding:70px 22px 30px">'+
+ '<div class="eyebrow">Step 2 of 7</div>'+
+ '<h1 class="h-l" style="margin:8px 0 6px">Choose your camera</h1>'+
+ '<p class="small" style="margin-bottom:20px">This is what every guest will be shooting on. You can change it after the wedding &mdash; nothing is baked in.</p>'+
+ '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">'+
+  styleCard("disposable","Disposable 2000s","ISO 400 · flash",true)+
+  styleCard("kodak","Warm Kodak","Gold 200")+
+  styleCard("bw","B&amp;W Elegant","Tri-X 400")+
+  styleCard("polaroid","Polaroid","600 · instant")+
+  styleCard("tlv","Tel Aviv Night","Neon 800")+
+  styleCard("cinema","Cinematic","Vision3 500T")+
+ '</div>'+
+ '<div style="height:22px"></div><button class="btn">Load the film</button>'+
+ '</div></div>';
+
+function styleCard(k,n,s,sel){
+  return '<button class="stylecard" data-style="'+k+'"'+(sel?' aria-pressed="true"':' aria-pressed="false"')+'>'+
+   tile(k==="bw"?51:k==="tlv"?52:k==="polaroid"?53:k==="cinema"?54:k==="kodak"?55:56,"1","",false,"st-"+k)+
+   '<div style="padding:10px 12px 12px"><div class="h-m" style="font-size:14px">'+n+'</div>'+
+   '<div class="mono" style="font-size:9.5px;letter-spacing:.14em;color:#6E6360;margin-top:3px;text-transform:uppercase">'+s+'</div></div></button>';
+}
+
+SC.cmode='<div class="screen" dir="ltr" id="sc-cmode"><div class="scroll" style="padding:70px 22px 30px">'+
+ '<div class="eyebrow">Step 4 of 7</div>'+
+ '<h1 class="h-l" style="margin:8px 0 6px">When does it develop?</h1>'+
+ '<p class="small" style="margin-bottom:20px">Guests never get to retake a photo. The only question is when anyone gets to see it.</p>'+
+ '<div style="display:flex;flex-direction:column;gap:10px">'+
+  modeCard("Darkroom","Photos appear to everyone 25 minutes after they are taken. The night unfolds live, always slightly behind.","Recommended",true)+
+  modeCard("Film Roll","Nothing is visible to anyone until the reveal. Quietest, purest, no live layer.","")+
+  modeCard("Instant","Everything appears immediately. Keeps the shot limit, loses the magic.","")+
+ '</div>'+
+ '<div style="height:24px"></div>'+
+ '<h2 class="h-m" style="margin-bottom:10px">The reveal</h2>'+
+ '<div class="statline"><span class="body">Tomorrow morning</span><span class="v" style="font-size:17px">10:00</span></div>'+
+ '<div class="statline"><span class="body">Guests get their own edit</span><span class="chip green">On</span></div>'+
+ '<div class="statline"><span class="body">Ceremony Mode</span><span class="chip green">20:30 &ndash; 21:10</span></div>'+
+ '<div style="height:22px"></div><button class="btn">Next &mdash; the night&rsquo;s shape</button>'+
+ '</div></div>';
+
+function modeCard(t,d,badge,sel){
+  return '<button class="modecard"'+(sel?' aria-pressed="true"':' aria-pressed="false"')+' data-mode="'+t+'">'+
+   '<div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><span class="h-m">'+t+'</span>'+
+   (badge?'<span class="chip red">'+badge+'</span>':'')+'</div>'+
+   '<p class="small" style="margin-top:6px">'+d+'</p></button>';
+}
+
+SC.clive='<div class="screen" dir="ltr" id="sc-clive"><div class="scroll" style="padding:70px 22px 30px">'+
+ '<div class="eyebrow">Live &middot; 23:41</div>'+
+ '<h1 class="h-l" style="margin:8px 0 18px">Your wedding is running.</h1>'+
+ '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:22px">'+
+  bigstat("143","guests shooting")+bigstat("312","frames so far")+bigstat("41","developing")+bigstat("12","secret memories")+
+ '</div>'+
+ '<button class="btn" data-go="mission">Start a live mission</button>'+
+ '<p class="small" style="text-align:center;margin:10px 0 24px">Tell the MC first. It only works if the room hears about it.</p>'+
+ '<div class="statline"><span class="body">Moderation</span><span class="chip green">Yotam &amp; Adi</span></div>'+
+ '<div class="statline"><span class="body">Venue screen</span><span class="chip green">Connected</span></div>'+
+ '<div class="statline"><span class="body">Flagged photos</span><span class="body">0</span></div>'+
+ '<div style="height:26px"></div>'+
+ '<p class="small" style="text-align:center;line-height:1.6">That is the whole page. It is your wedding &mdash; put the phone down.</p>'+
+ '</div></div>';
+
+function bigstat(v,l){return '<div style="padding:16px;border-radius:12px;background:var(--d-surf);border:1px solid var(--d-line)">'+
+ '<div class="mono" style="font-size:27px;font-weight:600;color:#FFC24D;letter-spacing:-.03em">'+v+'</div>'+
+ '<div class="small" style="margin-top:2px">'+l+'</div></div>';}
+
+SC.cmem='<div class="screen" dir="ltr" id="sc-cmem"><div class="scroll" style="padding:70px 22px 30px">'+
+ '<div class="eyebrow">15 May 2026 &middot; 10:04</div>'+
+ '<h1 class="h-xl" style="margin:8px 0 6px;font-size:29px">Your wedding,<br>through their eyes.</h1>'+
+ '<p class="small" style="margin-bottom:22px">1,847 frames from 143 people. Start with the four things the photographer could not give you.</p>'+
+ '<div style="display:flex;flex-direction:column;gap:10px;margin-bottom:24px">'+
+  memrow("🎙️","73 voice notes","Recorded as each roll ran out","Play the first")+
+  memrow("🔒","186 secret memories","Sent only to the two of you","Open")+
+  memrow("🏆","7 awards","Voted by the room, live","See who won")+
+  memrow("🎞️","Your night, in order","Before · Chuppah · Dinner · Dancing · After midnight","Watch")+
+ '</div>'+
+ '<h2 class="h-m" style="margin-bottom:10px">Every frame</h2>'+
+ '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:5px">'+
+  [81,82,83,84,85,86,87,89,90].map(function(s){return tile(s,"1","",false,"st-disposable");}).join("")+'</div>'+
+ '<div style="height:14px"></div>'+
+ '<button class="btn ghost">Download everything &mdash; 6.2 GB</button>'+
+ '</div></div>';
+
+function memrow(ic,t,s,cta){
+  return '<button class="quest" style="text-align:left"><span class="ic">'+ic+'</span>'+
+   '<div style="flex:1"><h3 class="h-m">'+t+'</h3><p class="small" style="margin-top:3px">'+s+'</p></div>'+
+   '<span class="chip" style="flex:none">'+cta+'</span></button>';
+}
+
+/* ---------------- venue screen ---------------- */
+function venue(){
+  return '<div style="position:absolute;inset:0;display:grid;grid-template-columns:1.55fr 1fr;color:#F3EDE7;font-family:Assistant,sans-serif">'+
+   '<div style="position:relative;overflow:hidden">'+
+     '<canvas data-seed="99" style="width:100%;height:100%;filter:contrast(1.2) saturate(1.3)"></canvas>'+
+     '<div style="position:absolute;inset:0;background:linear-gradient(90deg,transparent 40%,rgba(8,6,6,.9))"></div>'+
+     '<div style="position:absolute;left:34px;bottom:30px">'+
+       '<div class="mono" style="font-size:10px;letter-spacing:.24em;color:#FF7357">FRAME OF THE HOUR</div>'+
+       '<div style="font-family:Archivo;font-weight:800;font-size:26px;margin-top:6px">שירה &middot; שולחן 9</div>'+
+       '<div style="display:flex;gap:14px;margin-top:8px;font-size:14px;color:#B9ACA6"><span>❤️ 31</span><span>😂 8</span><span>🔥 22</span></div>'+
+     '</div>'+
+   '</div>'+
+   '<div style="padding:34px 34px 26px;display:flex;flex-direction:column;background:#0B0808">'+
+     '<div style="display:flex;justify-content:space-between;align-items:center">'+
+       '<span style="font-family:Archivo;font-weight:900;font-stretch:118%;font-size:11px;letter-spacing:.3em;color:#FF4A2E">SHOTLY</span>'+
+       '<span class="mono" style="font-size:10px;letter-spacing:.18em;color:#6E6360">23:41</span></div>'+
+     '<div style="height:1px;background:repeating-linear-gradient(to right,#241C1C 0 7px,transparent 7px 14px);margin:14px 0 22px"></div>'+
+     '<div style="font-family:Archivo;font-weight:800;font-size:21px;line-height:1.2;direction:rtl;text-align:right">מאיה &amp; דניאל</div>'+
+     '<div style="direction:rtl;text-align:right;color:#8A7E7A;font-size:13px;margin-top:4px">143 אורחים מצלמים עכשיו</div>'+
+     '<div style="margin-top:26px;padding:16px;border-radius:8px;background:rgba(255,74,46,.12);border:1px solid rgba(255,74,46,.3);direction:rtl;text-align:right">'+
+       '<div class="mono" style="font-size:9.5px;letter-spacing:.22em;color:#FF7357">משימה עכשיו</div>'+
+       '<div style="font-family:Archivo;font-weight:800;font-size:19px;margin-top:6px;line-height:1.25">הריקוד של ההורים</div>'+
+       '<div style="font-size:13px;color:#B9ACA6;margin-top:5px">סרקו את הכרטיס בשולחן &middot; +2 פריימים</div>'+
+     '</div>'+
+     '<div style="flex:1"></div>'+
+     '<div style="direction:rtl;text-align:right"><div class="mono" style="font-size:9.5px;letter-spacing:.22em;color:#6E6360;margin-bottom:9px">מתפתח עכשיו</div>'+
+       '<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:5px">'+
+        [91,92,93,94,95].map(function(s){return tile(s,"1","",false,"st-disposable");}).join("")+'</div></div>'+
+     '<div class="mono" style="font-size:8.5px;letter-spacing:.22em;color:#FF4A2E;margin-top:18px;direction:ltr">SHOTLY 400 &middot; MAYA &amp; DANIEL &middot; 14.05.26</div>'+
+   '</div></div>';
+}
+
+/* ---------------- nav model ---------------- */
+var NAV=[
+ ["Physical",[["pass","Camera Pass","pass","The Camera Pass","What a guest sees before they see anything else. It dares them instead of instructing them.","The bottom strip is the edge rebate — the film marking that becomes the brand."]]],
+ ["Guest · the night",[
+  ["enter","Scan landing","phone","You have 15 shots","The first screen after the QR. No splash, no logo animation — the promise, and one button.","Three chips do all the explaining the product ever needs to do."],
+  ["onboard","Name &amp; table","phone","The entire form","One required field. The table number is optional and pays for itself later in table albums and print products.","Tap the table numbers — they respond."],
+  ["camera","The camera","phone","The most important screen","Full-bleed viewfinder, the counter always visible, no preview after the shot. Press the shutter.","Press the shutter repeatedly. At zero it routes you to the end of the roll."],
+  ["contact","The ask","phone","Asked after the first shot","Not at the start — after they are invested. This one field solves reveal delivery and builds the growth loop.","Skippable, and it says exactly what it will be used for."],
+  ["darkroom","Darkroom feed","phone","Always something developing","The signature mechanic. Their own frames sit in a queue with a live countdown; developed ones are reactable.","The timers are ticking. Tap a reaction."],
+  ["quests","Challenges","phone","Film is the currency","No points. Everything pays out in exposures, which is the only number a guest already cares about.","Tap an open challenge to complete it and watch the counter change."],
+  ["mission","Live mission","phone","The takeover","MC-triggered, twice a night, announced on the projector. Never on a silent timer.","The clock is running."],
+  ["ceremony","Ceremony Mode","phone","The camera locks itself","The feature that turns the product's biggest objection into its best sales line.","No viewfinder, no shutter, no way around it."],
+  ["endroll","End of the roll","phone","Out of film","Designed as an ending, not an error. The voice note prompt sits exactly here, at peak sentiment.","This is where the guestbook actually lives."],
+  ["voice","Voice note","phone","15 seconds","The cheapest feature in the product and the one the couple will replay in ten years.",""]
+ ]],
+ ["Guest · next morning",[
+  ["revealed","The reveal","phone","Developed","Guests get a different edit of the same night — the headline, the best frame, and then their own roll.","Numbers arrive one at a time, not as a grid."],
+  ["myroll","Your own roll","phone","32 photos of you","The guest's peak. Nobody else in their life hands them 32 photos of themselves having a good time.","The award card carries the edge rebate — that is the share asset."]
+ ]],
+ ["Couple",[
+  ["cstyle","Choose your camera","phone","Not a filter picker","The emotional peak of setup. Tap a camera and every sample re-develops.","Tap the cameras — the LUT is applied live, exactly as it would be in production."],
+  ["cmode","When it develops","phone","Three camera modes","The one setup decision that changes what the whole night feels like.","Darkroom is the default and the recommendation."],
+  ["clive","The night view","phone","One page, one button","A couple on their wedding day has no attention. Moderation is delegated; this page barely asks for anything.",""],
+  ["cmem","The morning after","phone","A different product","No settings, no upload counts. Voices and secrets sit above the gallery, deliberately.",""]
+ ]],
+ ["Venue",[["tv","Projector screen","tv","The notification channel","Mobile web cannot push. This screen plus the MC is how a room finds out anything is happening.","Runs 90 seconds behind the feed so a moderator can catch something first."]]]
+];
+
+/* ---------------- boot ---------------- */
+var scEl=document.getElementById("screens");
+scEl.innerHTML=Object.keys(SC).map(function(k){return SC[k];}).join("");
+document.getElementById("tv").innerHTML=venue();
+drawQR(document.getElementById("qr"));
+
+var META={};
+var navHTML="";
+NAV.forEach(function(g){
+  navHTML+='<div class="navgrp"><h4>'+g[0]+'</h4>';
+  g[1].forEach(function(it,i){
+    META[it[0]]={dev:it[2],title:it[3],note:it[4],hint:it[5]};
+    navHTML+='<button class="navbtn" data-nav="'+it[0]+'"><span class="n mono">'+String(i+1).padStart(2,"0")+'</span><span>'+it[1]+'</span></button>';
+  });
+  navHTML+='</div>';
+});
+document.getElementById("nav").innerHTML=navHTML;
+
+function painted(root){
+  root.querySelectorAll("canvas[data-seed]").forEach(function(cv){
+    if(cv.dataset.done)return;
+    var r=cv.getBoundingClientRect();
+    if(!r.width)return;
+    paint(cv,+cv.dataset.seed,Math.round(r.width),Math.round(r.height));
+    cv.dataset.done="1";
+  });
+}
+
+var cur=null;
+function go(id){
+  if(!META[id])return;
+  cur=id;
+  var m=META[id];
+  document.querySelectorAll("[data-nav]").forEach(function(b){b.setAttribute("aria-current",b.dataset.nav===id?"true":"false");});
+  ["pass","phone","tv"].forEach(function(d){document.getElementById("dev-"+d).classList.toggle("on",m.dev===d);});
+  document.querySelectorAll(".screen").forEach(function(s){s.classList.toggle("on",s.id==="sc-"+id);});
+  document.getElementById("sTitle").textContent=m.title;
+  document.getElementById("sNote").textContent=m.note;
+  document.getElementById("sHint").textContent=m.hint||"";
+  var grp=id==="pass"?"PRINTED":(id.charAt(0)==="c"&&id.length>4&&META[id].dev==="phone"&&["cstyle","cmode","clive","cmem"].indexOf(id)>=0)?"COUPLE":(id==="tv"?"VENUE":"GUEST");
+  document.getElementById("sMeta").textContent=grp;
+  var after=function(){
+    painted(document);
+    if(id==="camera")vf();
+    if(id==="voice")wave();
+  };
+  after();          /* rect reads force layout, so this is already correct */
+  setTimeout(after,80);  /* and again once fonts/aspect-ratios have settled */
+}
+
+/* viewfinder */
+var vfDone=false;
+function vf(){
+  var cv=document.getElementById("vf");if(!cv)return;
+  var r=cv.getBoundingClientRect();if(!r.width)return;
+  if(vfDone)return;vfDone=true;
+  paint(cv,7,Math.round(r.width),Math.round(r.height));
+}
+function wave(){
+  var w=document.getElementById("wave");if(!w||w.children.length)return;
+  var h="";for(var i=0;i<34;i++){var v=12+Math.abs(Math.sin(i*.7))*54;
+    h+='<span style="width:3px;border-radius:2px;background:'+(i<20?"#FF4A2E":"#2B2222")+';height:'+v.toFixed(0)+'px"></span>';}
+  w.innerHTML=h;
+}
+
+/* ---------------- interactions ---------------- */
+var toast=document.getElementById("toast"),tT;
+function say(html){
+  toast.innerHTML=html;toast.classList.add("on");
+  clearTimeout(tT);tT=setTimeout(function(){toast.classList.remove("on");},1900);
+}
+function syncCounter(){
+  document.querySelectorAll("[data-left]").forEach(function(e){e.textContent=left();});
+}
+
+document.addEventListener("click",function(e){
+  var nav=e.target.closest("[data-nav]");
+  if(nav){go(nav.dataset.nav);return;}
+  var g=e.target.closest("[data-go]");
+  if(g){go(g.dataset.go);return;}
+
+  var sh=e.target.closest("#shutter");
+  if(sh){
+    if(left()<=0)return;
+    S.used++;syncCounter();
+    var f=document.getElementById("flash");
+    f.classList.remove("go");void f.offsetWidth;f.classList.add("go");
+    if(navigator.vibrate)navigator.vibrate(18);
+    say(S.secret?'🔒 פריים <b>'+S.used+'</b> נשמר · רק לזוג':'פריים <b>'+S.used+'</b> נשמר');
+    if(left()===0)setTimeout(function(){go("endroll");},1100);
+    return;
+  }
+
+  var sb=e.target.closest("#secretBtn");
+  if(sb){
+    S.secret=!S.secret;
+    sb.setAttribute("aria-pressed",S.secret);
+    sb.className="chip"+(S.secret?" red":"");
+    sb.innerHTML=S.secret?"🔒 רק לזוג":"🔓 גלוי לכולם";
+    var hint=document.getElementById("camHint");
+    if(hint)hint.textContent=S.secret?"אף אורח לא יראה את זה. רק הם, מחר.":"לא תראי את התמונה. תסמכי על עצמך.";
+    return;
+  }
+
+  var t=e.target.closest("[data-tbl]");
+  if(t){
+    document.querySelectorAll("[data-tbl]").forEach(function(b){b.setAttribute("aria-pressed","false");});
+    t.setAttribute("aria-pressed","true");S.table=+t.dataset.tbl;return;
+  }
+
+  var r=e.target.closest(".react");
+  if(r){
+    var on=r.getAttribute("aria-pressed")==="true";
+    r.setAttribute("aria-pressed",!on);
+    var c=r.querySelector(".c");c.textContent=(+c.textContent)+(on?-1:1);
+    return;
+  }
+
+  var q=e.target.closest("[data-quest]");
+  if(q&&!q.classList.contains("done")){
+    q.classList.add("done");
+    q.querySelector(".ic").textContent="✓";
+    S.total+=2;syncCounter();
+    say('🎞️ הושלם · <b>+2</b> פריימים');
+    return;
+  }
+
+  var st=e.target.closest("[data-style]");
+  if(st){
+    document.querySelectorAll("[data-style]").forEach(function(b){b.setAttribute("aria-pressed","false");});
+    st.setAttribute("aria-pressed","true");
+    return;
+  }
+
+  var md=e.target.closest("[data-mode]");
+  if(md){
+    document.querySelectorAll("[data-mode]").forEach(function(b){b.setAttribute("aria-pressed","false");});
+    md.setAttribute("aria-pressed","true");
+    return;
+  }
+});
+
+/* develop + mission timers */
+setInterval(function(){
+  document.querySelectorAll("[data-tick]").forEach(function(e){
+    var s=+e.dataset.tick;if(s<=0)return;
+    s--;e.dataset.tick=s;
+    e.textContent=Math.floor(s/60)+":"+String(s%60).padStart(2,"0");
+  });
+  var m=document.getElementById("misT");
+  if(m&&cur==="mission"){
+    var p=m.textContent.split(":"),ms=(+p[0])*60+(+p[1]);
+    if(ms>0){ms--;m.textContent=Math.floor(ms/60)+":"+String(ms%60).padStart(2,"0");}
+  }
+},1000);
+
+new ResizeObserver(function(){painted(document);}).observe(document.body);
+go("pass");
+})();
+</script>

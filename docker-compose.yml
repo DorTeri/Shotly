@@ -1,0 +1,22 @@
+# Local Postgres for development. Production points DATABASE_URL at Neon.
+services:
+  db:
+    image: postgres:17-alpine
+    container_name: shotly-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: shotly
+      POSTGRES_PASSWORD: shotly
+      POSTGRES_DB: shotly
+    ports:
+      - "5433:5432"
+    volumes:
+      - shotly-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U shotly -d shotly"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+volumes:
+  shotly-pgdata:
