@@ -186,7 +186,8 @@ function Developed({ slug, data }: { slug: string; data: RevealData }) {
                 )}
                 <div className="flex-1">
                   <div className="text-[10px] tracking-[0.16em] text-safelight-warm uppercase">
-                    {a.emoji} {a.he}
+                    {/* The emoji already stands in for a missing photo — don't say it twice. */}
+                    {a.thumb ? `${a.emoji} ${a.he}` : a.he}
                   </div>
                   <div className="mt-0.5 font-display text-[16px] font-bold">
                     {a.by ?? "—"}

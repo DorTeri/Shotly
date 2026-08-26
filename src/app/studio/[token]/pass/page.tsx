@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import QRCode from "qrcode";
 import { prisma } from "@/lib/prisma";
 import { CameraPass } from "@/components/studio/CameraPass";
+import { baseUrl } from "@/lib/baseUrl";
 
 export const dynamic = "force-dynamic";
 
@@ -35,7 +36,7 @@ export default async function PassPage({
   });
   if (!wedding) notFound();
 
-  const base = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+  const base = await baseUrl();
   const url = `${base}/w/${wedding.slug}`;
 
   // Rendered server-side as an inline SVG so printing never waits on a network

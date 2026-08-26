@@ -12,15 +12,24 @@ Israel-first: Hebrew guest UI, full RTL, built for 350–500 guest weddings.
 
 ```bash
 npm install
-cp .env.example .env
-npm run db:up      # local Postgres in Docker on 5433
+cp .env.example .env    # set ADMIN_PASSWORD
+npm run db:up           # local Postgres in Docker on 5433
 npm run db:migrate
-npm run db:seed    # prints the URLs below
+npm run db:seed         # three weddings, one per state
 npm run dev
 ```
 
-The seed prints a camera link, a venue screen, a studio token and a second wedding
-that sits mid-ceremony so Ceremony Mode is demoable.
+Then open **`/admin`** and sign in with `ADMIN_PASSWORD`. You create the weddings;
+couples never touch a setup flow. Creating one gives you a QR plus five links to
+hand out: the guest camera, the printable Camera Pass, the venue screen, the
+couple's album, and a moderator link.
+
+The seed leaves three weddings running so every state is visible at once: one live,
+one mid-ceremony (Ceremony Mode), and one from yesterday that has already developed.
+
+**Testing on a real phone.** Leave `NEXT_PUBLIC_APP_URL` unset and links follow the
+host you opened the console on — so open `http://<your-lan-ip>:3000/admin` and the
+QR will be one your phone can actually scan. `localhost` QRs are unscannable.
 
 Two environment notes on this machine: the native SWC binary is blocked by an
 Application Control policy, so `dev` and `build` run `--webpack` rather than
@@ -29,15 +38,20 @@ Windows `localhost` resolves to `::1` first while Docker publishes IPv4 only.
 
 ## Where things stand
 
-**Working end to end** — guest camera with the no-preview shutter, the offline
-upload queue, the Darkroom develop delay, reactions, challenges paying out in film,
-secret frames, voice notes, the contact ask, Ceremony Mode, the guest's own contact
-sheet, the venue projector, and the printable Camera Pass with its MC script.
+**Working end to end** — the operator console, guest camera with the no-preview
+shutter, the offline upload queue, the Darkroom develop delay, reactions, challenges
+paying out in film, secret frames, voice notes, the contact ask, Ceremony Mode, the
+guest's contact sheet, the venue projector, the printable Camera Pass with its MC
+script, guest reporting, Best Man Mode moderation, the awards, the next-day reveal,
+and the couple's album with voice playback.
 
-**Not built yet** — the couple's setup flow and post-wedding studio, the next-day
-reveal sequence, awards, live missions, Best Man Mode moderation, payments, and the
-S3 driver is written but unexercised. `src/lib/screen.ts` is a pass-through: wire a
-real content screener up before running an actual wedding.
+**Not built yet** — live missions, the leaderboard, payments, email/SMS delivery of
+the reveal, download-everything, style baking at export, and personal guest albums.
+The S3 driver is written but unexercised.
+
+**Before a real wedding:** `src/lib/screen.ts` is a pass-through. No content
+screening runs, which means nothing stops an explicit photo reaching the projector
+except a human watching the moderator link. Wire a real screener up first.
 
 ## The three decisions everything else follows from
 
@@ -58,13 +72,17 @@ its direct URL returns 403. Without that the mechanic would be theatre.
 
 ```
 prisma/schema.prisma          the data model
+src/lib/weddings.ts           the one place weddings are created (admin + seed)
+src/lib/awards.ts             the seven awards, computed from reactions
 src/lib/night.ts              phases, develop timing, reveal chapters
 src/lib/queue.ts              the IndexedDB outbox — capture and delivery are separate
 src/lib/styles.ts             the six cameras
 src/lib/challenges.ts         the challenge packs, Hebrew as the original
 src/components/guest/         the camera, darkroom, quests, roll
 src/components/screen/        the projector
-src/components/studio/        the printed Camera Pass
+src/components/admin/         the operator console
+src/components/mod/           Best Man Mode
+src/components/studio/        the couple's album and the printed Camera Pass
 design/                       the product design and the original prototype
 ```
 

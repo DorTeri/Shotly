@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { isAdmin } from "@/lib/admin";
 import { createWedding, weddingLinks } from "@/lib/weddings";
+import { baseUrl } from "@/lib/baseUrl";
 import { fail, json } from "@/lib/api";
 
 export const dynamic = "force-dynamic";
@@ -36,7 +37,7 @@ export async function POST(req: Request) {
 
   try {
     const wedding = await createWedding(parsed.data);
-    return json({ id: wedding.id, slug: wedding.slug, links: weddingLinks(wedding) });
+    return json({ id: wedding.id, slug: wedding.slug, links: weddingLinks(wedding, await baseUrl()) });
   } catch (err) {
     console.error("[admin] create wedding failed", err);
     return fail(500, err instanceof Error ? err.message : "Could not create that wedding.");

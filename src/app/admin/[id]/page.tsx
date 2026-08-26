@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { isAdmin } from "@/lib/admin";
 import { nightState } from "@/lib/night";
 import { weddingLinks } from "@/lib/weddings";
+import { baseUrl } from "@/lib/baseUrl";
 import { cameraStyle } from "@/lib/styles";
 import { WeddingHandover } from "@/components/admin/WeddingHandover";
 
@@ -26,7 +27,7 @@ export default async function AdminWedding({
   });
   if (!wedding) notFound();
 
-  const links = weddingLinks(wedding);
+  const links = weddingLinks(wedding, await baseUrl());
   const now = new Date();
   const night = nightState(wedding, now);
 

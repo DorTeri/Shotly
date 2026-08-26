@@ -184,7 +184,7 @@ function OverviewPane({
                 )}
                 <div>
                   <div className="text-[10px] tracking-[0.16em] text-safelight-warm uppercase">
-                    {a.emoji} {a.he}
+                    {a.thumb ? `${a.emoji} ${a.he}` : a.he}
                   </div>
                   <div className="mt-0.5 font-display text-[16px] font-bold">
                     {a.by ?? "—"}
