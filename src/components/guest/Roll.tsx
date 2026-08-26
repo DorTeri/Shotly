@@ -71,7 +71,7 @@ export function Roll({ slug, voiceEnabled }: { slug: string; voiceEnabled: boole
         </p>
 
         {data.revealed && data.appearsIn > 0 && (
-          <div className="mb-5 rounded-2xl border border-safelight/30 bg-safelight/10 p-4">
+          <div className="mb-5 rounded-2xl border border-rose/30 bg-rose/10 p-4">
             <h2 className="font-display text-[16px] font-bold">
               מצאנו {data.appearsIn} תמונות שאת/ה מופיע/ה בהן
             </h2>
@@ -100,7 +100,7 @@ export function Roll({ slug, voiceEnabled }: { slug: string; voiceEnabled: boole
                   style={{ filter: style.cssFilter }}
                 />
               ) : (
-                <span className="tabular absolute inset-0 z-10 flex items-center justify-center text-[10px] text-film">
+                <span className="tabular absolute inset-0 z-10 flex items-center justify-center text-[10px] text-gold">
                   {countdown(new Date(s.developsAt).getTime(), now)}
                 </span>
               )}

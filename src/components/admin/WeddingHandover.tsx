@@ -14,9 +14,9 @@ interface Links {
 
 const PHASE: Record<string, { label: string; tone: string }> = {
   BEFORE_ROLL: { label: "Not open yet", tone: "text-paper-3" },
-  CEREMONY: { label: "Ceremony — camera locked", tone: "text-film" },
-  OPEN: { label: "Live", tone: "text-safelight" },
-  DEVELOPING: { label: "Developing", tone: "text-film" },
+  CEREMONY: { label: "Ceremony — camera locked", tone: "text-gold" },
+  OPEN: { label: "Live", tone: "text-rose" },
+  DEVELOPING: { label: "Developing", tone: "text-gold" },
   REVEALED: { label: "Revealed", tone: "text-go" },
 };
 
@@ -195,7 +195,7 @@ export function WeddingHandover({
         type="button"
         onClick={remove}
         disabled={busy}
-        className="mt-6 flex min-h-[44px] items-center gap-2 text-[13.5px] font-semibold text-paper-3 hover:text-safelight-warm disabled:opacity-40"
+        className="mt-6 flex min-h-[44px] items-center gap-2 text-[13.5px] font-semibold text-paper-3 hover:text-rose-soft disabled:opacity-40"
       >
         <Trash2 size={15} aria-hidden />
         Delete this wedding and every frame
@@ -220,7 +220,7 @@ function LinkRow({
   return (
     <div
       className={`flex items-center gap-2 rounded-xl border px-3 py-2 ${
-        primary ? "border-safelight/40 bg-safelight/10" : "border-line bg-ink"
+        primary ? "border-rose/40 bg-rose/10" : "border-line bg-ink"
       }`}
     >
       <span className="flex-1 overflow-hidden">
@@ -253,7 +253,7 @@ function LinkRow({
 function Stat({ label, value }: { label: string; value: number }) {
   return (
     <div className="rounded-2xl border border-line bg-surface p-4">
-      <div className="tabular text-[24px] font-semibold tracking-tight text-film">
+      <div className="tabular text-[24px] font-semibold tracking-tight text-gold">
         {value}
       </div>
       <div className="mt-0.5 text-[12.5px] text-paper-3">{label}</div>

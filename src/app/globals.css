@@ -1,29 +1,39 @@
 @import "tailwindcss";
 
 /*
-  Shotly's palette is film chemistry, not a brand deck: a darkroom black with a
-  red bias, photo-paper white, safelight red for anything that acts, and film
-  amber reserved for one thing only — the exposure counter.
+  The palette comes straight off the logo: a warm near-black body, a dusty rose
+  heart, a lighter blush film bar, and a gold sparkle.
 
-  The guest camera is committed to dark. It is a camera, at night, at a wedding;
-  a light mode would be a worse product, not a preference.
+  The guest camera stays dark — it is a camera, at night, on a dancefloor, and a
+  white viewfinder would blind people and wreck the photograph. So the brand's
+  light world is inverted for the app: ink becomes the ground, paper becomes the
+  type, and rose does the work red used to.
+
+  One consequence worth knowing: rose is a LIGHT accent. Anything filled with it
+  takes ink-coloured text, never white — same as the logo, dark on light.
 */
 @theme {
-  --color-ink: #0b0808;
-  --color-surface: #171111;
-  --color-surface-2: #211919;
-  --color-line: #2b2222;
+  /* brand, straight from the mark */
+  --color-rose: #d9a08d;
+  --color-rose-soft: #eab8a6;
+  --color-blush: #edbeb0;
+  --color-gold: #e2bc81;
 
-  --color-paper: #f3ede7;
-  --color-paper-2: #a99c98;
-  --color-paper-3: #6e6360;
+  /* grounds */
+  --color-ink: #14100f;
+  --color-surface: #1e1a18;
+  --color-surface-2: #282220;
+  --color-line: #342c29;
 
-  --color-safelight: #ff4a2e;
-  --color-safelight-warm: #ff7357;
-  --color-film: #ffc24d;
-  --color-go: #57c08a;
+  /* type */
+  --color-paper: #f4eee9;
+  --color-paper-2: #b6a9a2;
+  --color-paper-3: #80736d;
+
+  --color-go: #7fbf9b;
 
   --font-sans: var(--font-assistant), system-ui, sans-serif;
+  --font-brand: var(--font-quicksand), var(--font-assistant), system-ui, sans-serif;
   --font-display: var(--font-archivo), Impact, system-ui, sans-serif;
   --font-mono: var(--font-azeret), ui-monospace, monospace;
 }
@@ -47,13 +57,13 @@ body {
   font-variant-numeric: tabular-nums;
 }
 
-/* The film edge rebate — the marking that doubles as the logo. */
+/* The film edge rebate — the marking that doubles as a signature. */
 .rebate {
   font-family: var(--font-mono);
   font-size: 8.5px;
   letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: var(--color-safelight);
+  color: var(--color-rose);
 }
 
 .sprockets {
@@ -83,7 +93,7 @@ body {
   background: linear-gradient(
     115deg,
     transparent 30%,
-    rgba(255, 74, 46, 0.14) 50%,
+    rgba(217, 160, 141, 0.18) 50%,
     transparent 70%
   );
   background-size: 280% 100%;

@@ -70,7 +70,7 @@ export function Darkroom({
                   key={d.id}
                   className="developing relative flex aspect-square flex-col items-center justify-center gap-1 overflow-hidden rounded-md border border-line bg-surface"
                 >
-                  <span className="tabular relative z-10 text-[13px] text-film">
+                  <span className="tabular relative z-10 text-[13px] text-gold">
                     {countdown(new Date(d.developsAt).getTime(), now)}
                   </span>
                   <span className="relative z-10 text-[10px] text-paper-3">
@@ -202,7 +202,7 @@ function FrameCard({
               onClick={() => void react(kind)}
               aria-pressed={on}
               className={`flex min-h-[36px] items-center gap-1.5 rounded-full px-3 text-[14px] transition-all active:scale-95 ${
-                on ? "bg-safelight/20 text-safelight-warm" : "bg-white/6 text-paper-2"
+                on ? "bg-rose/20 text-rose-soft" : "bg-white/6 text-paper-2"
               }`}
             >
               <span aria-hidden>{emoji}</span>

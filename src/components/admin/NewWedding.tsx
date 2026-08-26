@@ -72,7 +72,7 @@ export function NewWedding() {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="mt-6 flex min-h-[52px] w-full items-center justify-center gap-2 rounded-2xl bg-safelight text-[16px] font-bold text-white"
+        className="mt-6 flex min-h-[52px] w-full items-center justify-center gap-2 rounded-2xl bg-rose text-[16px] font-bold text-ink"
       >
         <Plus size={18} aria-hidden />
         New wedding
@@ -193,7 +193,7 @@ export function NewWedding() {
                 title={p.blurbEn}
                 className={`rounded-full px-3.5 py-2 text-[13.5px] transition-colors ${
                   on
-                    ? "bg-safelight/20 font-semibold text-safelight-warm"
+                    ? "bg-rose/20 font-semibold text-rose-soft"
                     : "bg-white/6 text-paper-3"
                 }`}
               >
@@ -209,13 +209,13 @@ export function NewWedding() {
         <Toggle checked={voiceNotes} onChange={setVoice} label="Voice notes" />
       </div>
 
-      {error && <p className="mt-4 text-[13.5px] text-safelight-warm">{error}</p>}
+      {error && <p className="mt-4 text-[13.5px] text-rose-soft">{error}</p>}
 
       <div className="mt-6 flex gap-2">
         <button
           type="submit"
           disabled={busy || !coupleNames}
-          className="flex min-h-[50px] flex-1 items-center justify-center rounded-2xl bg-safelight text-[16px] font-bold text-white disabled:opacity-40"
+          className="flex min-h-[50px] flex-1 items-center justify-center rounded-2xl bg-rose text-[16px] font-bold text-ink disabled:opacity-40"
         >
           {busy ? "Creating…" : "Create and get the QR"}
         </button>
@@ -232,7 +232,7 @@ export function NewWedding() {
 }
 
 const inputCls =
-  "min-h-[46px] w-full rounded-xl border border-line bg-ink px-3 text-[15px] text-paper focus:border-safelight focus:outline-none";
+  "min-h-[46px] w-full rounded-xl border border-line bg-ink px-3 text-[15px] text-paper focus:border-rose focus:outline-none";
 
 function Field({
   label,

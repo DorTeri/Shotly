@@ -55,7 +55,7 @@ function WaitingRoom({ data }: { data: RevealData }) {
   return (
     <main className="flex min-h-[100dvh] flex-col items-center justify-center bg-ink px-8 text-center">
       <div className="developing relative mb-8 h-24 w-24 overflow-hidden rounded-lg border border-line" />
-      <div className="text-[10px] tracking-[0.24em] text-safelight-warm uppercase">
+      <div className="text-[10px] tracking-[0.24em] text-rose-soft uppercase">
         {data.coupleNames}
       </div>
       <h1 className="mt-3 font-display text-[34px] leading-tight font-extrabold">
@@ -64,7 +64,7 @@ function WaitingRoom({ data }: { data: RevealData }) {
       <p className="mt-3 max-w-[28ch] text-[15px] leading-relaxed text-paper-2">
         הכל נפתח בעוד
       </p>
-      <div className="tabular mt-2 text-[30px] font-semibold text-film">
+      <div className="tabular mt-2 text-[30px] font-semibold text-gold">
         {countdown(at, now)}
       </div>
 
@@ -127,7 +127,7 @@ function Developed({ slug, data }: { slug: string; data: RevealData }) {
               }`}
             >
               <span className="text-[14.5px] text-paper-2">{s.label}</span>
-              <span className="tabular text-[21px] font-semibold text-film">{s.n}</span>
+              <span className="tabular text-[21px] font-semibold text-gold">{s.n}</span>
             </div>
           ))}
         </div>
@@ -164,7 +164,7 @@ function Developed({ slug, data }: { slug: string; data: RevealData }) {
                 key={a.kind}
                 className={`flex items-center gap-3 overflow-hidden rounded-xl border p-3 ${
                   a.mine
-                    ? "border-safelight/50 bg-safelight/12"
+                    ? "border-rose/50 bg-rose/12"
                     : "border-line bg-surface"
                 }`}
               >
@@ -180,12 +180,12 @@ function Developed({ slug, data }: { slug: string; data: RevealData }) {
                     />
                   </div>
                 ) : (
-                  <span className="flex h-14 w-14 flex-none items-center justify-center rounded-lg bg-film/12 text-[22px]">
+                  <span className="flex h-14 w-14 flex-none items-center justify-center rounded-lg bg-gold/12 text-[22px]">
                     {a.emoji}
                   </span>
                 )}
                 <div className="flex-1">
-                  <div className="text-[10px] tracking-[0.16em] text-safelight-warm uppercase">
+                  <div className="text-[10px] tracking-[0.16em] text-rose-soft uppercase">
                     {/* The emoji already stands in for a missing photo — don't say it twice. */}
                     {a.thumb ? `${a.emoji} ${a.he}` : a.he}
                   </div>
@@ -195,7 +195,7 @@ function Developed({ slug, data }: { slug: string; data: RevealData }) {
                   </div>
                 </div>
                 {a.mine && (
-                  <span className="flex-none rounded-full bg-safelight px-2.5 py-1 text-[11px] font-semibold text-white">
+                  <span className="flex-none rounded-full bg-rose px-2.5 py-1 text-[11px] font-semibold text-ink">
                     את/ה!
                   </span>
                 )}
@@ -239,7 +239,7 @@ function Developed({ slug, data }: { slug: string; data: RevealData }) {
       <section className="mt-12 px-5">
         <Link
           href={`/w/${slug}`}
-          className="flex min-h-[54px] w-full items-center justify-center rounded-2xl bg-safelight text-[16px] font-bold text-white"
+          className="flex min-h-[54px] w-full items-center justify-center rounded-2xl bg-rose text-[16px] font-bold text-ink"
         >
           {data.you ? `הרול של ${data.you.displayName}` : "פתחו את המצלמה"}
         </Link>

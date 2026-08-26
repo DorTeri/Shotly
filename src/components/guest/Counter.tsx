@@ -22,8 +22,8 @@ export function Counter({
         <span
           className={
             size === "lg"
-              ? "text-[34px] leading-none tracking-tight text-film"
-              : "text-[26px] leading-none tracking-tight text-film"
+              ? "text-[34px] leading-none tracking-tight text-gold"
+              : "text-[26px] leading-none tracking-tight text-gold"
           }
         >
           {shown}

@@ -45,7 +45,7 @@ export default async function PassPage({
     type: "svg",
     margin: 0,
     errorCorrectionLevel: "M",
-    color: { dark: "#12100e", light: "#f5efe7" },
+    color: { dark: "#1E1F1F", light: "#F7F2ED" },
   });
 
   return (

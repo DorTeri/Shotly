@@ -74,18 +74,18 @@ export function ContactAsk({
           inputMode="tel"
           enterKeyHint="done"
           placeholder="050-000-0000"
-          className="mt-5 min-h-[54px] w-full rounded-2xl border border-line bg-white/6 px-4 text-center text-[17px] text-paper placeholder:text-paper-3 focus:border-safelight focus:outline-none"
+          className="mt-5 min-h-[54px] w-full rounded-2xl border border-line bg-white/6 px-4 text-center text-[17px] text-paper placeholder:text-paper-3 focus:border-rose focus:outline-none"
         />
 
         {error && (
-          <p className="mt-2 text-center text-[13px] text-safelight-warm">{error}</p>
+          <p className="mt-2 text-center text-[13px] text-rose-soft">{error}</p>
         )}
 
         <button
           type="button"
           onClick={save}
           disabled={!value.trim() || busy}
-          className="mt-3 flex min-h-[54px] w-full items-center justify-center rounded-2xl bg-safelight text-[17px] font-bold text-white disabled:opacity-40"
+          className="mt-3 flex min-h-[54px] w-full items-center justify-center rounded-2xl bg-rose text-[17px] font-bold text-ink disabled:opacity-40"
         >
           {busy ? "רגע…" : "שלחו לי"}
         </button>

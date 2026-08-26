@@ -45,7 +45,7 @@ export function Quests({
       </header>
 
       <div className="flex-1 overflow-y-auto px-5 pb-6">
-        <div className="mb-5 flex items-start gap-3 rounded-2xl border border-film/30 bg-film/10 p-4">
+        <div className="mb-5 flex items-start gap-3 rounded-2xl border border-gold/30 bg-gold/10 p-4">
           <span className="text-lg">🎞️</span>
           <div>
             <h3 className="font-display text-[15px] font-bold">
@@ -139,7 +139,7 @@ function Quest({
     >
       <span
         className={`flex h-9 w-9 flex-none items-center justify-center rounded-xl text-[16px] ${
-          q.done ? "bg-go/15" : "bg-safelight/14"
+          q.done ? "bg-go/15" : "bg-rose/14"
         }`}
         aria-hidden
       >
@@ -163,7 +163,7 @@ function Quest({
       </span>
       <span
         className={`tabular flex-none rounded-full px-2.5 py-1 text-[12px] font-semibold ${
-          live ? "bg-safelight/18 text-safelight-warm" : "bg-film/14 text-film"
+          live ? "bg-rose/18 text-rose-soft" : "bg-gold/14 text-gold"
         }`}
       >
         +{q.payout}

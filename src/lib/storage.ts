@@ -124,8 +124,21 @@ function s3Storage(): Storage {
   return s3Impl;
 }
 
+let localWarned = false;
+
 export function storage(): Storage {
-  return process.env.STORAGE_DRIVER === "s3" ? s3Storage() : localStorage;
+  if (process.env.STORAGE_DRIVER === "s3") return s3Storage();
+
+  if (!localWarned && process.env.NODE_ENV === "production") {
+    localWarned = true;
+    console.warn(
+      "[shotly] STORAGE_DRIVER=local in production. On a serverless host " +
+        "(Vercel, Lambda) the filesystem is read-only and wiped between " +
+        "invocations, so guest frames will fail to write or silently disappear. " +
+        "Set STORAGE_DRIVER=s3 with AWS_REGION and AWS_S3_BUCKET.",
+    );
+  }
+  return localStorage;
 }
 
 export function frameKey(weddingId: string, frameId: string, variant: "orig" | "thumb") {

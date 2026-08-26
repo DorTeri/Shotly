@@ -186,7 +186,7 @@ export function Camera({
             onClick={() => setSecret((s) => !s)}
             aria-pressed={secret}
             className={`flex min-h-11 items-center gap-1.5 rounded-full px-3.5 text-[12.5px] font-semibold backdrop-blur transition-colors ${
-              secret ? "bg-safelight/25 text-safelight-warm" : "bg-white/10 text-paper"
+              secret ? "bg-rose/25 text-rose-soft" : "bg-white/10 text-paper"
             }`}
           >
             {secret ? <Lock size={14} aria-hidden /> : <LockOpen size={14} aria-hidden />}
@@ -199,10 +199,10 @@ export function Camera({
 
       {/* armed challenge */}
       {armed && (
-        <div className="relative z-10 mx-5 mb-3 flex items-center gap-3 rounded-2xl border border-safelight/40 bg-safelight/15 px-4 py-3 backdrop-blur">
+        <div className="relative z-10 mx-5 mb-3 flex items-center gap-3 rounded-2xl border border-rose/40 bg-rose/15 px-4 py-3 backdrop-blur">
           <span className="text-lg">{armed.emoji}</span>
           <div className="flex-1">
-            <div className="text-[10px] tracking-[0.18em] text-safelight-warm uppercase">
+            <div className="text-[10px] tracking-[0.18em] text-rose-soft uppercase">
               משימה
             </div>
             <div className="text-[15px] leading-tight font-semibold">{armed.textHe}</div>

@@ -31,13 +31,13 @@ export function TabBar({
             onClick={() => onChange(id)}
             aria-current={active}
             className={`relative flex min-h-[62px] flex-col items-center justify-center gap-1 text-[10.5px] font-semibold transition-colors ${
-              active ? "text-safelight" : "text-paper-3"
+              active ? "text-rose" : "text-paper-3"
             }`}
           >
             <Icon size={21} strokeWidth={1.7} aria-hidden />
             <span>{label}</span>
             {id === "darkroom" && developing > 0 && (
-              <span className="tabular absolute top-2 right-[calc(50%-22px)] rounded-full bg-film px-1.5 text-[10px] font-semibold text-ink">
+              <span className="tabular absolute top-2 right-[calc(50%-22px)] rounded-full bg-gold px-1.5 text-[10px] font-semibold text-ink">
                 {developing}
               </span>
             )}

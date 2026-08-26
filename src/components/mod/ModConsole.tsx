@@ -66,7 +66,7 @@ export function ModConsole({ token, coupleNames }: { token: string; coupleNames:
   return (
     <main className="min-h-[100dvh] bg-ink px-5 pt-[calc(env(safe-area-inset-top)+18px)] pb-10">
       <header>
-        <div className="text-[10px] tracking-[0.2em] text-safelight uppercase">
+        <div className="text-[10px] tracking-[0.2em] text-rose uppercase">
           Best Man Mode
         </div>
         <h1 className="mt-1.5 font-display text-[24px] font-extrabold">{coupleNames}</h1>
@@ -83,12 +83,12 @@ export function ModConsole({ token, coupleNames }: { token: string; coupleNames:
             onClick={() => setTab(t.id)}
             aria-pressed={tab === t.id}
             className={`min-h-[38px] rounded-full px-4 text-[13.5px] font-semibold transition-colors ${
-              tab === t.id ? "bg-safelight/20 text-safelight-warm" : "bg-white/6 text-paper-3"
+              tab === t.id ? "bg-rose/20 text-rose-soft" : "bg-white/6 text-paper-3"
             }`}
           >
             {t.label}
             {t.id === "queue" && queueCount > 0 && (
-              <span className="tabular mr-1.5 rounded-full bg-safelight px-1.5 text-[11px] text-white">
+              <span className="tabular mr-1.5 rounded-full bg-rose px-1.5 text-[11px] text-ink">
                 {queueCount}
               </span>
             )}
@@ -97,7 +97,7 @@ export function ModConsole({ token, coupleNames }: { token: string; coupleNames:
       </div>
 
       {data?.moderationMode === "APPROVE" && tab === "queue" && (
-        <p className="mt-4 rounded-xl border border-film/30 bg-film/10 p-3 text-[13px] leading-relaxed text-paper-2">
+        <p className="mt-4 rounded-xl border border-gold/30 bg-gold/10 p-3 text-[13px] leading-relaxed text-paper-2">
           החתונה במצב אישור מראש — שום תמונה לא מופיעה עד שמאשרים אותה כאן.
         </p>
       )}
@@ -123,7 +123,7 @@ export function ModConsole({ token, coupleNames }: { token: string; coupleNames:
                   style={{ filter: style.cssFilter }}
                 />
                 {f.reports > 0 && (
-                  <span className="tabular absolute top-2 right-2 rounded-full bg-safelight px-2 py-0.5 text-[11px] font-semibold text-white">
+                  <span className="tabular absolute top-2 right-2 rounded-full bg-rose px-2 py-0.5 text-[11px] font-semibold text-ink">
                     {f.reports} דיווחים
                   </span>
                 )}
@@ -164,7 +164,7 @@ export function ModConsole({ token, coupleNames }: { token: string; coupleNames:
                     type="button"
                     disabled={working === f.id}
                     onClick={() => act(f.id, "hide")}
-                    className="flex min-h-[38px] flex-1 items-center justify-center gap-1.5 rounded-lg bg-safelight/18 text-[13px] font-semibold text-safelight-warm disabled:opacity-40"
+                    className="flex min-h-[38px] flex-1 items-center justify-center gap-1.5 rounded-lg bg-rose/18 text-[13px] font-semibold text-rose-soft disabled:opacity-40"
                   >
                     <EyeOff size={14} aria-hidden />
                     להסתיר

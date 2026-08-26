@@ -13,7 +13,7 @@ export default async function AdminLogin() {
         <div className="max-w-sm text-center">
           <h1 className="font-display text-[22px] font-extrabold">Console disabled</h1>
           <p className="mt-3 text-[15px] leading-relaxed text-paper-2">
-            Set <code className="tabular text-film">ADMIN_PASSWORD</code> in{" "}
+            Set <code className="tabular text-gold">ADMIN_PASSWORD</code> in{" "}
             <code className="tabular">.env</code> and restart the server.
           </p>
         </div>

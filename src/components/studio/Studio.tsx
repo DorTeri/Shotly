@@ -50,7 +50,7 @@ export function Studio({ token }: { token: string }) {
         </h1>
         <p className="mt-3 text-[15px] text-paper-2">
           הכל ייפתח בעוד{" "}
-          <span className="tabular text-film">
+          <span className="tabular text-gold">
             {countdown(new Date(data.night.revealAt).getTime(), now)}
           </span>
         </p>
@@ -73,7 +73,7 @@ export function Studio({ token }: { token: string }) {
   return (
     <main className="min-h-[100dvh] bg-ink pb-16">
       <header className="px-5 pt-[calc(env(safe-area-inset-top)+24px)]">
-        <div className="text-[10px] tracking-[0.22em] text-safelight-warm uppercase">
+        <div className="text-[10px] tracking-[0.22em] text-rose-soft uppercase">
           {new Date(data.weddingDate).toLocaleDateString("he-IL")}
         </div>
         <h1 className="mt-2 font-display text-[30px] leading-tight font-extrabold text-balance">
@@ -96,7 +96,7 @@ export function Studio({ token }: { token: string }) {
             aria-pressed={section === t.id}
             className={`min-h-[38px] flex-none rounded-full px-4 text-[13.5px] font-semibold transition-colors ${
               section === t.id
-                ? "bg-safelight/20 text-safelight-warm"
+                ? "bg-rose/20 text-rose-soft"
                 : "bg-white/6 text-paper-3"
             }`}
           >
@@ -120,7 +120,7 @@ export function Studio({ token }: { token: string }) {
 function Num({ n, label }: { n: number; label: string }) {
   return (
     <div>
-      <div className="tabular text-[22px] font-semibold text-film">{n}</div>
+      <div className="tabular text-[22px] font-semibold text-gold">{n}</div>
       <div className="text-[12px] text-paper-3">{label}</div>
     </div>
   );
@@ -178,12 +178,12 @@ function OverviewPane({
                     />
                   </div>
                 ) : (
-                  <span className="flex h-14 w-14 flex-none items-center justify-center rounded-lg bg-film/12 text-[22px]">
+                  <span className="flex h-14 w-14 flex-none items-center justify-center rounded-lg bg-gold/12 text-[22px]">
                     {a.emoji}
                   </span>
                 )}
                 <div>
-                  <div className="text-[10px] tracking-[0.16em] text-safelight-warm uppercase">
+                  <div className="text-[10px] tracking-[0.16em] text-rose-soft uppercase">
                     {a.thumb ? `${a.emoji} ${a.he}` : a.he}
                   </div>
                   <div className="mt-0.5 font-display text-[16px] font-bold">
@@ -236,7 +236,7 @@ function Voices({ token }: { token: string }) {
             type="button"
             onClick={() => setPlaying((p) => (p === v.id ? null : v.id))}
             aria-label={playing === v.id ? "עצור" : "נגן"}
-            className="flex h-11 w-11 flex-none items-center justify-center rounded-full bg-safelight text-white"
+            className="flex h-11 w-11 flex-none items-center justify-center rounded-full bg-rose text-ink"
           >
             {playing === v.id ? <Pause size={17} /> : <Play size={17} />}
           </button>
@@ -280,7 +280,7 @@ function Secrets({
   return (
     <>
       <p className="mb-4 flex items-start gap-2 rounded-xl border border-line bg-surface p-3.5 text-[13.5px] leading-relaxed text-paper-2">
-        <Lock size={15} className="mt-0.5 flex-none text-safelight" aria-hidden />
+        <Lock size={15} className="mt-0.5 flex-none text-rose" aria-hidden />
         אורחים בחרו לשלוח את אלה רק אליכם. אף אחד אחר לא ראה אותן — לא בפיד, לא
         על המסך, ולא בפרסים.
       </p>

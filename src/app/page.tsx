@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import { Wordmark } from "@/components/brand/Mark";
 
 export const metadata: Metadata = {
   title: "Shotly",
@@ -10,17 +11,15 @@ export default function Home() {
   return (
     <main className="flex min-h-[100dvh] flex-col justify-between bg-ink px-6 py-12">
       <div className="mx-auto w-full max-w-lg">
-        <div className="font-display text-[13px] font-black tracking-[0.32em] text-safelight uppercase">
-          Shotly
-        </div>
-        <div className="sprockets mt-3 h-[8px]" />
+        <Wordmark size={38} />
+        <div className="sprockets mt-4 h-[8px]" />
       </div>
 
       <div className="mx-auto w-full max-w-lg">
         <h1 className="font-display text-[clamp(34px,9vw,52px)] leading-[0.98] font-extrabold tracking-tight text-balance">
           יש לך 15 צילומים.
           <br />
-          <span className="text-safelight">אל תבזבז אותם.</span>
+          <span className="text-rose">אל תבזבז אותם.</span>
         </h1>
 
         <p className="mt-6 text-[17px] leading-relaxed text-paper-2">

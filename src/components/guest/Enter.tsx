@@ -1,5 +1,7 @@
 "use client";
 
+import { Mark } from "@/components/brand/Mark";
+
 /**
  * What a guest sees eight seconds after scanning a card on the table. No splash,
  * no logo animation, no "welcome to" — the promise, and one button.
@@ -22,7 +24,8 @@ export function Enter({
     <div className="relative flex h-full flex-col justify-end overflow-hidden bg-ink px-6 pb-10">
       <div className="absolute inset-0 bg-[radial-gradient(120%_90%_at_50%_20%,rgba(255,74,46,0.22),transparent_65%)]" />
       <div className="relative">
-        <div className="text-[10px] tracking-[0.2em] text-safelight-warm uppercase">
+        <Mark size={40} className="mb-5" title="Shotly" />
+        <div className="text-[10px] tracking-[0.2em] text-rose-soft uppercase">
           {coupleNames}
         </div>
         <h1 className="mt-3 font-display text-[38px] leading-[0.98] font-extrabold tracking-tight text-balance">
@@ -43,7 +46,7 @@ export function Enter({
         <button
           type="button"
           onClick={onStart}
-          className="mt-8 flex min-h-[54px] w-full items-center justify-center rounded-2xl bg-safelight text-[17px] font-bold text-white shadow-[0_1px_0_rgba(255,255,255,0.22)_inset,0_10px_24px_-10px_rgba(255,74,46,0.8)] transition-transform active:scale-[0.98]"
+          className="mt-8 flex min-h-[54px] w-full items-center justify-center rounded-2xl bg-rose text-[17px] font-bold text-ink shadow-[0_1px_0_rgba(255,255,255,0.22)_inset,0_10px_24px_-10px_rgba(255,74,46,0.8)] transition-transform active:scale-[0.98]"
         >
           קחו לי את המצלמה
         </button>

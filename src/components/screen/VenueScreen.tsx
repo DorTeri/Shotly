@@ -4,6 +4,7 @@ import useSWR from "swr";
 import Image from "next/image";
 import { cameraStyle } from "@/lib/styles";
 import type { WeddingStyle } from "@/generated/prisma/client";
+import { Mark } from "@/components/brand/Mark";
 
 const fetcher = (u: string) => fetch(u).then((r) => r.json());
 
@@ -77,7 +78,7 @@ export function VenueScreen({ slug }: { slug: string }) {
             )}
             <div className="absolute inset-0 bg-gradient-to-l from-ink/90 via-transparent to-transparent" />
             <div className="absolute right-[3vw] bottom-[4vh]" dir="rtl">
-              <div className="tabular text-[0.85vw] tracking-[0.24em] text-safelight-warm uppercase">
+              <div className="tabular text-[0.85vw] tracking-[0.24em] text-rose-soft uppercase">
                 הפריים של השעה
               </div>
               <div className="mt-2 font-display text-[2.2vw] leading-none font-extrabold">
@@ -102,9 +103,7 @@ export function VenueScreen({ slug }: { slug: string }) {
       {/* the rail */}
       <section className="flex flex-col bg-ink px-[2.4vw] py-[3vh]">
         <header className="flex items-center justify-between">
-          <span className="font-display text-[0.9vw] font-black tracking-[0.3em] text-safelight uppercase">
-            Shotly
-          </span>
+          <Mark size={30} title="Shotly" />
           <span className="tabular text-[0.8vw] tracking-[0.18em] text-paper-3">{date}</span>
         </header>
 
@@ -122,9 +121,9 @@ export function VenueScreen({ slug }: { slug: string }) {
         {data.challenge && (
           <div
             dir="rtl"
-            className="mt-[3vh] rounded-lg border border-safelight/30 bg-safelight/12 p-[1.4vw]"
+            className="mt-[3vh] rounded-lg border border-rose/30 bg-rose/12 p-[1.4vw]"
           >
-            <div className="tabular text-[0.75vw] tracking-[0.22em] text-safelight-warm">
+            <div className="tabular text-[0.75vw] tracking-[0.22em] text-rose-soft">
               משימה עכשיו
             </div>
             <div className="mt-[0.8vh] font-display text-[1.5vw] leading-tight font-extrabold">

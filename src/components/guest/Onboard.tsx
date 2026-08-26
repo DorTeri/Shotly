@@ -58,7 +58,7 @@ export function Onboard({
         placeholder="נועה"
         autoComplete="given-name"
         enterKeyHint="done"
-        className="mt-4 min-h-[54px] w-full rounded-2xl border border-line bg-white/6 px-4 text-[17px] text-paper placeholder:text-paper-3 focus:border-safelight focus:outline-none"
+        className="mt-4 min-h-[54px] w-full rounded-2xl border border-line bg-white/6 px-4 text-[17px] text-paper placeholder:text-paper-3 focus:border-rose focus:outline-none"
       />
 
       <h3 className="mt-8 font-display text-[17px] font-bold">באיזה שולחן את/ה?</h3>
@@ -75,7 +75,7 @@ export function Onboard({
             aria-pressed={table === n}
             className={`tabular flex aspect-square items-center justify-center rounded-xl border text-[14px] transition-colors ${
               table === n
-                ? "border-safelight bg-safelight/20 font-semibold text-safelight-warm"
+                ? "border-rose bg-rose/20 font-semibold text-rose-soft"
                 : "border-transparent bg-white/5 text-paper-2"
             }`}
           >
@@ -84,13 +84,13 @@ export function Onboard({
         ))}
       </div>
 
-      {error && <p className="mt-4 text-[14px] text-safelight-warm">{error}</p>}
+      {error && <p className="mt-4 text-[14px] text-rose-soft">{error}</p>}
 
       <button
         type="button"
         onClick={submit}
         disabled={!name.trim() || busy}
-        className="mt-8 flex min-h-[54px] w-full items-center justify-center rounded-2xl bg-safelight text-[17px] font-bold text-white transition-transform active:scale-[0.98] disabled:opacity-40"
+        className="mt-8 flex min-h-[54px] w-full items-center justify-center rounded-2xl bg-rose text-[17px] font-bold text-ink transition-transform active:scale-[0.98] disabled:opacity-40"
       >
         {busy ? "רגע…" : "מתחילים"}
       </button>

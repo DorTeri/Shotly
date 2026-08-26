@@ -11,6 +11,7 @@
     "db:migrate": "prisma migrate dev",
     "db:seed": "tsx prisma/seed.ts",
     "db:studio": "prisma studio",
+    "icons": "node scripts/gen-icons.mjs",
     "db:up": "docker compose up -d",
     "db:down": "docker compose down"
   },

@@ -124,7 +124,7 @@ export function VoiceNote({
     <div
       className={`rounded-2xl p-5 text-center ${
         prominent
-          ? "border border-safelight/30 bg-safelight/10"
+          ? "border border-rose/30 bg-rose/10"
           : "border border-line bg-surface"
       }`}
     >
@@ -134,7 +134,7 @@ export function VoiceNote({
             {levels.map((v, i) => (
               <span
                 key={i}
-                className="w-[3px] rounded-full bg-safelight"
+                className="w-[3px] rounded-full bg-rose"
                 style={{ height: `${Math.max(10, v * 62)}px` }}
               />
             ))}
@@ -142,14 +142,14 @@ export function VoiceNote({
               <span className="text-[13px] text-paper-3">מקליט…</span>
             )}
           </div>
-          <div className="tabular mt-1 text-[24px] font-semibold text-safelight">
+          <div className="tabular mt-1 text-[24px] font-semibold text-rose">
             0:{String(Math.floor(ms / 1000)).padStart(2, "0")}
           </div>
           <p className="mt-1 text-[13px] text-paper-3">עוד {remaining} שניות</p>
           <button
             type="button"
             onClick={stop}
-            className="mt-4 flex min-h-[50px] w-full items-center justify-center gap-2 rounded-2xl bg-safelight text-[16px] font-bold text-white"
+            className="mt-4 flex min-h-[50px] w-full items-center justify-center gap-2 rounded-2xl bg-rose text-[16px] font-bold text-ink"
           >
             <Square size={16} aria-hidden />
             סיימתי
@@ -164,12 +164,12 @@ export function VoiceNote({
           <p className="mt-1.5 text-[13.5px] leading-relaxed text-paper-2">
             15 שניות. הם ישמעו את זה מחר בבוקר. שווה עוד 2 פריימים.
           </p>
-          {error && <p className="mt-2 text-[13px] text-safelight-warm">{error}</p>}
+          {error && <p className="mt-2 text-[13px] text-rose-soft">{error}</p>}
           <button
             type="button"
             onClick={() => void start()}
             disabled={stage === "sending"}
-            className="mt-4 flex min-h-[50px] w-full items-center justify-center gap-2 rounded-2xl bg-safelight text-[16px] font-bold text-white disabled:opacity-50"
+            className="mt-4 flex min-h-[50px] w-full items-center justify-center gap-2 rounded-2xl bg-rose text-[16px] font-bold text-ink disabled:opacity-50"
           >
             <Mic size={16} aria-hidden />
             {stage === "sending" ? "שולח…" : "להקליט"}
