@@ -3,17 +3,15 @@ import sharp from "sharp";
 import { nanoid } from "nanoid";
 import { PrismaClient } from "../src/generated/prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
-import { CHALLENGE_PACKS, DEFAULT_PACK_IDS } from "../src/lib/challenges";
+import { createWedding, weddingLinks } from "../src/lib/weddings";
 import { frameKey, storage } from "../src/lib/storage";
 import { developsAt } from "../src/lib/night";
-import type { ChallengeSeed } from "../src/lib/challenges";
 
 const prisma = new PrismaClient({
   adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL }),
 });
 
 const MIN = 60_000;
-const HOUR = 60 * MIN;
 
 /** An abstract warm frame that reads like an out-of-focus flash photo. */
 async function fakeFrame(seed: number) {
@@ -38,95 +36,13 @@ async function fakeFrame(seed: number) {
   return { full, thumb };
 }
 
-function challengeTime(
-  item: ChallengeSeed,
-  marks: { ceremony: Date; dinner: Date; dancing: Date; late: Date; end: Date },
-) {
-  if (item.window !== "TIMED" || !item.at) return { opensAt: null, closesAt: null };
-  const from = marks[item.at];
-  const to =
-    item.at === "ceremony" ? marks.dinner
-    : item.at === "dinner" ? marks.dancing
-    : item.at === "dancing" ? marks.late
-    : marks.end;
-  return { opensAt: from, closesAt: to };
+function localISO(d: Date) {
+  const p = (n: number) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`;
 }
 
-async function createWedding(opts: {
-  slug: string;
-  coupleNames: string;
-  /** Minutes from now that the ceremony starts. Negative = already happened. */
-  ceremonyOffsetMin: number;
-  withFrames: boolean;
-}) {
-  const now = Date.now();
-  const ceremonyStart = new Date(now + opts.ceremonyOffsetMin * MIN);
-  const ceremonyEnd = new Date(ceremonyStart.getTime() + 40 * MIN);
-  const dinnerAt = new Date(ceremonyEnd.getTime() + 10 * MIN);
-  const dancingAt = new Date(dinnerAt.getTime() + 70 * MIN);
-  const late = new Date(dancingAt.getTime() + 2 * HOUR);
-  const end = new Date(dancingAt.getTime() + 4 * HOUR);
-
-  const revealAt = new Date(ceremonyStart);
-  revealAt.setDate(revealAt.getDate() + 1);
-  revealAt.setHours(10, 0, 0, 0);
-
-  await prisma.wedding.deleteMany({ where: { slug: opts.slug } });
-
-  const wedding = await prisma.wedding.create({
-    data: {
-      slug: opts.slug,
-      coupleNames: opts.coupleNames,
-      weddingDate: ceremonyStart,
-      tier: "PARTY",
-      style: "DISPOSABLE",
-      cameraMode: "DARKROOM",
-      exposures: 15,
-      developDelayMinutes: 25,
-      rollOpensAt: new Date(ceremonyStart.getTime() - 2 * HOUR),
-      ceremonyStart,
-      ceremonyEnd,
-      dinnerAt,
-      dancingAt,
-      revealAt,
-      studioToken: nanoid(28),
-      modToken: nanoid(28),
-      ownerEmail: "dortayari@gmail.com",
-    },
-  });
-
-  let sort = 0;
-  for (const pack of CHALLENGE_PACKS) {
-    if (!DEFAULT_PACK_IDS.includes(pack.id)) continue;
-    for (const item of pack.items) {
-      const { opensAt, closesAt } = challengeTime(item, {
-        ceremony: ceremonyStart,
-        dinner: dinnerAt,
-        dancing: dancingAt,
-        late,
-        end,
-      });
-      await prisma.challenge.create({
-        data: {
-          weddingId: wedding.id,
-          pack: pack.id,
-          emoji: item.emoji,
-          textHe: item.textHe,
-          textEn: item.textEn,
-          window: item.window,
-          payout: item.payout ?? 2,
-          opensAt,
-          closesAt,
-          sort: sort++,
-        },
-      });
-    }
-  }
-
-  if (!opts.withFrames) return wedding;
-
-  // Seed the Darkroom before anyone arrives — an empty feed is the fastest way
-  // to lose a guest, and the getting-ready roll is what fills it at a real wedding.
+/** Fills a wedding's Darkroom so a demo never opens on an empty feed. */
+async function seedFrames(weddingId: string, revealAt: Date) {
   const names: [string, number][] = [
     ["יובל", 4],
     ["שירה", 9],
@@ -137,12 +53,14 @@ async function createWedding(opts: {
   ];
 
   const store = storage();
+  const now = Date.now();
   let seed = 11;
+  let total = 0;
 
   for (const [displayName, tableNumber] of names) {
     const guest = await prisma.guest.create({
       data: {
-        weddingId: wedding.id,
+        weddingId,
         displayName,
         tableNumber,
         deviceToken: nanoid(24),
@@ -152,13 +70,12 @@ async function createWedding(opts: {
 
     const shots = 3 + Math.floor(Math.random() * 3);
     for (let i = 0; i < shots; i++) {
-      // Spread across the last two hours so some have developed and some haven't.
       const takenAt = new Date(now - Math.random() * 115 * MIN);
       const { full, thumb } = await fakeFrame(seed++);
 
       const frame = await prisma.frame.create({
         data: {
-          weddingId: wedding.id,
+          weddingId,
           guestId: guest.id,
           storageKey: "",
           width: 1200,
@@ -175,49 +92,69 @@ async function createWedding(opts: {
         },
       });
 
-      const key = frameKey(wedding.id, frame.id, "orig");
-      const tkey = frameKey(wedding.id, frame.id, "thumb");
+      const key = frameKey(weddingId, frame.id, "orig");
+      const tkey = frameKey(weddingId, frame.id, "thumb");
       await store.put(key, full, "image/jpeg");
       await store.put(tkey, thumb, "image/jpeg");
       await prisma.frame.update({
         where: { id: frame.id },
         data: { storageKey: key, thumbKey: tkey },
       });
+      total++;
     }
 
-    await prisma.guest.update({
-      where: { id: guest.id },
-      data: { exposuresUsed: shots },
-    });
+    await prisma.guest.update({ where: { id: guest.id }, data: { exposuresUsed: shots } });
   }
-
-  return wedding;
+  return total;
 }
 
 async function main() {
-  const open = await createWedding({
+  const now = Date.now();
+
+  // Three weddings, one per state worth looking at.
+  await prisma.wedding.deleteMany({
+    where: { slug: { in: ["maya-daniel", "noa-yotam", "tal-amit"] } },
+  });
+
+  const live = await createWedding({
     slug: "maya-daniel",
     coupleNames: "מאיה & דניאל",
-    ceremonyOffsetMin: -150, // ceremony finished; we're in the dancing
-    withFrames: true,
+    ceremonyStart: localISO(new Date(now - 150 * MIN)), // ceremony done, dancing now
   });
+  const frames = await seedFrames(live.id, live.revealAt);
 
   const ceremony = await createWedding({
     slug: "noa-yotam",
     coupleNames: "נועה & יותם",
-    ceremonyOffsetMin: -10, // mid-chuppah, so Ceremony Mode is demoable
-    withFrames: false,
+    ceremonyStart: localISO(new Date(now - 10 * MIN)), // mid-chuppah
   });
 
-  const base = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
-  const frames = await prisma.frame.count({ where: { weddingId: open.id } });
+  // Yesterday's wedding, already developed — the reveal and the album are live.
+  const past = await createWedding({
+    slug: "tal-amit",
+    coupleNames: "טל & עמית",
+    ceremonyStart: localISO(new Date(now - 26 * 60 * MIN)),
+    revealAt: localISO(new Date(now - 60 * MIN)),
+  });
+  const pastFrames = await seedFrames(past.id, past.revealAt);
 
-  console.log(`\n  Seeded ${frames} frames.\n`);
-  console.log(`  Camera        ${base}/w/${open.slug}`);
-  console.log(`  Venue screen  ${base}/screen/${open.slug}`);
-  console.log(`  Studio        ${base}/studio/${open.studioToken}`);
-  console.log(`  Best Man Mode ${base}/mod/${open.modToken}`);
-  console.log(`  Ceremony Mode ${base}/w/${ceremony.slug}\n`);
+  const links = weddingLinks(live);
+  const pastLinks = weddingLinks(past);
+
+  console.log(`\n  Seeded ${frames + pastFrames} frames across 3 weddings.\n`);
+  console.log(`  Operator      ${process.env.NEXT_PUBLIC_APP_URL}/admin`);
+  console.log("");
+  console.log(`  Live wedding`);
+  console.log(`    camera      ${links.camera}`);
+  console.log(`    screen      ${links.screen}`);
+  console.log(`    pass        ${links.pass}`);
+  console.log(`    moderator   ${links.mod}`);
+  console.log("");
+  console.log(`  Ceremony Mode ${weddingLinks(ceremony).camera}`);
+  console.log("");
+  console.log(`  Already revealed`);
+  console.log(`    reveal      ${pastLinks.camera}`);
+  console.log(`    album       ${pastLinks.studio}\n`);
 }
 
 main()
